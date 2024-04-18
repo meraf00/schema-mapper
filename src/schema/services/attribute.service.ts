@@ -19,6 +19,9 @@ export class AttributeService {
     const attribute = this.attributeRepository.create();
     attribute.name = createAttributeDto.name;
     attribute.table = { id: createAttributeDto.tableId } as Table;
+    if (createAttributeDto.references) {
+      attribute.references = { id: createAttributeDto.references } as Attribute;
+    }
 
     try {
       attribute.type = this.utilityService.enumFromValue(

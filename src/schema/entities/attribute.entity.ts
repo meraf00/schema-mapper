@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -54,7 +55,8 @@ export class Attribute {
   @Column({ default: false })
   isGenerated: boolean;
 
-  @OneToOne(() => Attribute, { nullable: true })
+  @OneToOne(() => Attribute, { nullable: true, cascade: true })
+  @JoinColumn()
   references: Attribute;
 
   @ManyToOne(() => Table, (table) => table.attributes, { nullable: false })

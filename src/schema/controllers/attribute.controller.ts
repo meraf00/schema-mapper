@@ -29,7 +29,7 @@ export class AttributeController {
         case InvalidAttributeTypeException:
           throw new BadRequestException(e.message);
         default:
-          throw new BadRequestException();
+          throw new BadRequestException(e.message);
       }
     }
   }

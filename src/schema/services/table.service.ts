@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Schema } from '../entities/schema.entity';
 import { Table } from '../entities/table.entity';
 import { Repository } from 'typeorm';
-import { CreateTableDto } from '../dto/request.dto';
+import { CreateTableDto, UpdateTableDto } from '../dto/request.dto';
 
 @Injectable()
 export class TableService {
@@ -30,7 +30,7 @@ export class TableService {
     return this.tableRepository.find();
   }
 
-  async update(id: string, updateTableDto: CreateTableDto): Promise<Table> {
+  async update(id: string, updateTableDto: UpdateTableDto): Promise<Table> {
     await this.tableRepository.update(id, updateTableDto);
     return { id, ...updateTableDto } as Table;
   }
