@@ -3,11 +3,12 @@ import { Poppins } from 'next/font/google';
 import './globals.css';
 import '@mantine/core/styles.css';
 
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import { ColorSchemeScript } from '@mantine/core';
+import Providers from './providers';
 
 const poppins = Poppins({
   display: 'swap',
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700', '800'],
   subsets: ['latin'],
 });
 
@@ -26,8 +27,8 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body>
-        <MantineProvider>{children}</MantineProvider>
+      <body className={poppins.className}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
