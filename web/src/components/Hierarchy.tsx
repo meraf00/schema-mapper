@@ -1,6 +1,10 @@
+'use client';
+
 import { Schema } from '@/lib/model/schema';
 import React from 'react';
 import { Node } from './Node';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { setActive } from '@/lib/store/entity/slice';
 
 export interface Active {
   schema: string | null;
@@ -11,11 +15,12 @@ export interface Active {
 
 export interface HierarchyProps {
   schemas: Schema[];
-  active: Active;
-  setActive: (active: Active) => void;
 }
 
-export const Hierarchy = ({ schemas, active, setActive }: HierarchyProps) => {
+export const Hierarchy = ({ schemas }: HierarchyProps) => {
+  const dispatch = useAppDispatch();
+  const active = useAppSelector((state) => state.entity);
+
   return (
     <>
       {schemas.map((schema) => (
@@ -24,12 +29,14 @@ export const Hierarchy = ({ schemas, active, setActive }: HierarchyProps) => {
           title={schema.name}
           isActive={active.id === schema.id}
           onClick={() => {
-            setActive({
-              attribute: null,
-              table: null,
-              schema: schema.id,
-              id: schema.id,
-            });
+            dispatch(
+              setActive({
+                attribute: null,
+                table: null,
+                schema: schema.id,
+                id: schema.id,
+              })
+            );
           }}
         >
           {schema.tables.map((table) => (
@@ -38,12 +45,14 @@ export const Hierarchy = ({ schemas, active, setActive }: HierarchyProps) => {
               title={table.name}
               isActive={active.id === table.id}
               onClick={() => {
-                setActive({
-                  attribute: null,
-                  schema: schema.id,
-                  table: table.id,
-                  id: table.id,
-                });
+                dispatch(
+                  setActive({
+                    attribute: null,
+                    schema: schema.id,
+                    table: table.id,
+                    id: table.id,
+                  })
+                );
               }}
             >
               {table.attributes.map((attribute) => (
@@ -52,12 +61,14 @@ export const Hierarchy = ({ schemas, active, setActive }: HierarchyProps) => {
                   title={attribute.name}
                   isActive={active.id === attribute.id}
                   onClick={() => {
-                    setActive({
-                      table: table.id,
-                      schema: schema.id,
-                      attribute: attribute.id,
-                      id: attribute.id,
-                    });
+                    dispatch(
+                      setActive({
+                        table: table.id,
+                        schema: schema.id,
+                        attribute: attribute.id,
+                        id: attribute.id,
+                      })
+                    );
                   }}
                 />
               ))}

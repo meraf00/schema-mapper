@@ -5,16 +5,21 @@ import { createSlice } from '@reduxjs/toolkit';
 import { ENTITY, EntityState } from './types';
 
 const entityInitialState: EntityState = {
-  active: null,
-  type: null,
+  schema: null,
+  table: null,
+  attribute: null,
+  id: null,
 };
 
 const entitySlice = createSlice({
   name: ENTITY,
   initialState: entityInitialState,
   reducers: {
-    setActive(state, action) {
-      state.active = action.payload;
+    setActive(state, { payload: { schema, table, attribute, id } }) {
+      state.schema = schema;
+      state.table = table;
+      state.attribute = attribute;
+      state.id = id;
     },
   },
 });

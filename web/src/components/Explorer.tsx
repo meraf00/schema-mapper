@@ -11,6 +11,8 @@ import { Hierarchy } from './Hierarchy';
 import { CreateSchemaForm } from './Forms/CreateSchemaForm';
 import { CreateTableForm } from './Forms/CreateTableForm';
 import { CreateAttributeForm } from './Forms/CreateAttributeForm';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { setActive } from '@/lib/store/entity/slice';
 
 export interface ExplorerProps
   extends React.DetailedHTMLProps<
@@ -22,18 +24,8 @@ export interface ExplorerProps
 
 export const Explorer = ({ schemas, ...props }: ExplorerProps) => {
   const [opened, { open, close }] = useDisclosure(false);
-
-  const [active, setActive] = React.useState<{
-    schema: string | null;
-    table: string | null;
-    attribute: string | null;
-    id: string | null;
-  }>({
-    schema: null,
-    table: null,
-    attribute: null,
-    id: null,
-  });
+  const dispatch = useAppDispatch();
+  const active = useAppSelector((state) => state.entity);
 
   let form, title;
 
@@ -73,12 +65,14 @@ export const Explorer = ({ schemas, ...props }: ExplorerProps) => {
           <span
             className="font-bold"
             onClick={() =>
-              setActive({
-                schema: null,
-                table: null,
-                attribute: null,
-                id: null,
-              })
+              dispatch(
+                setActive({
+                  schema: null,
+                  table: null,
+                  attribute: null,
+                  id: null,
+                })
+              )
             }
           >
             Explorer
@@ -96,7 +90,7 @@ export const Explorer = ({ schemas, ...props }: ExplorerProps) => {
           </div>
         </div>
 
-        <Hierarchy schemas={schemas} active={active} setActive={setActive} />
+        <Hierarchy schemas={schemas} />
       </div>
     </>
   );
