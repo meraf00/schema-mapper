@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Schema } from '@/model/schema';
+import { Schema } from '@/lib/model/schema';
 import { IconPlus, IconReload } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal } from '@mantine/core';

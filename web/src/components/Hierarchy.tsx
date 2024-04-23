@@ -1,4 +1,4 @@
-import { Schema } from '@/model/schema';
+import { Schema } from '@/lib/model/schema';
 import React from 'react';
 import { Node } from './Node';
 

@@ -2,9 +2,9 @@
 
 import { getSchemas } from '@/api';
 import { Explorer } from '@/components/Explorer';
-import { Attribute, AttributeType } from '@/model/attribute';
-import { Schema } from '@/model/schema';
-import { Table } from '@/model/table';
+import { Attribute, AttributeType } from '@/lib/model/attribute';
+import { Schema } from '@/lib/model/schema';
+import { Table } from '@/lib/model/table';
 import { useQuery } from '@tanstack/react-query';
 
 const schemas = [

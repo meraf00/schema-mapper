@@ -1,10 +1,10 @@
 'use client';
 
 import { cacheKeys, createAttribute } from '@/api';
-import { Attribute } from '@/model/attribute';
-import { Schema } from '@/model/schema';
+import { Attribute } from '@/lib/model/attribute';
+import { Schema } from '@/lib/model/schema';
 
-import { Table } from '@/model/table';
+import { Table } from '@/lib/model/table';
 import { Button, Checkbox, Grid, Select, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

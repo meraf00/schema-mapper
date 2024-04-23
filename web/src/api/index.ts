@@ -1,4 +1,4 @@
-import { AttributeType, RelationType } from '@/model/attribute';
+import { AttributeType, RelationType } from '@/lib/model/attribute';
 import axios from 'axios';
 
 const instance = axios.create({
