@@ -32,6 +32,13 @@ export interface AttributeData {
 
 export const cacheKeys = {
   schemas: 'schemas',
+  tables: 'tables',
+  attributes: 'attributes',
+};
+
+export const getSchema = async (id: string) => {
+  const response = await instance.get(`schemas/${id}`);
+  return response.data;
 };
 
 export const getSchemas = async () => {
@@ -44,13 +51,45 @@ export const createSchema = async (name: string) => {
   return response.data;
 };
 
+export const updateSchema = async (id: string, name: string) => {
+  const response = await instance.put(`schemas/${id}`, { name });
+  return response.data;
+};
+
+export const getTable = async (id: string) => {
+  const response = await instance.get(`tables/${id}`);
+  return response.data;
+};
+
 export const createTable = async (schemaId: string, name: string) => {
   const response = await instance.post(`tables`, { name, schemaId });
   return response.data;
 };
 
+export const updateTable = async (id: string, name: string) => {
+  const response = await instance.put(`tables/${id}`, { name });
+  return response.data;
+};
+
+export const getAttribute = async (id: string) => {
+  const response = await instance.get(`attributes/${id}`);
+  return response.data;
+};
+
 export const createAttribute = async (attribute: AttributeData) => {
-  console.log(attribute);
   const response = await instance.post(`attributes`, attribute);
   return response.data;
+};
+
+export const updateAttribute = async (
+  attribId: string,
+  attribute: AttributeData
+) => {
+  console.log(attribute, attribId);
+  try {
+    const response = await instance.put(`attributes/${attribId}`, attribute);
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
 };

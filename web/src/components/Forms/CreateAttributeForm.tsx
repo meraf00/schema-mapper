@@ -59,7 +59,9 @@ export const CreateAttributeForm = ({
   const mutation = useMutation({
     mutationFn: createAttribute,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
+      queryClient.invalidateQueries({
+        queryKey: [cacheKeys.schemas, cacheKeys.attributes],
+      });
       close();
     },
   });
@@ -78,6 +80,7 @@ export const CreateAttributeForm = ({
           isForeign: data.foreign ?? false,
           tableId,
           references: data['referenced-table'],
+          relationType: data['relation-type'],
         })
       )}
     >
@@ -85,6 +88,8 @@ export const CreateAttributeForm = ({
         label="Name"
         placeholder="Name"
         {...form.getInputProps('name')}
+        key="name"
+        required
       />
 
       <Select
@@ -109,6 +114,8 @@ export const CreateAttributeForm = ({
         label="Data type"
         placeholder="Data type"
         {...form.getInputProps('type')}
+        key="data-type"
+        required
       />
 
       {showRelation && (
@@ -127,9 +134,11 @@ export const CreateAttributeForm = ({
             {...form.getInputProps('referenced-table')}
             onChange={(event) => {
               setAttribs(
-                tables.find((table) => table.name === event)?.attributes || []
+                tables.find((table) => table.id === event)?.attributes || []
               );
             }}
+            key="referenced-table"
+            required
           />
 
           <Select
@@ -144,6 +153,8 @@ export const CreateAttributeForm = ({
             label="Referenced attribute"
             placeholder="Referenced attribute"
             {...form.getInputProps('referenced-attribute')}
+            key="referenced-attribute"
+            required
           />
 
           <Select
@@ -155,6 +166,8 @@ export const CreateAttributeForm = ({
             label="Relation type"
             placeholder="Relation type"
             {...form.getInputProps('relation-type')}
+            key="relation-type"
+            required
           />
         </>
       )}
@@ -165,16 +178,19 @@ export const CreateAttributeForm = ({
             label="Primary"
             placeholder="Primary"
             {...form.getInputProps('primary')}
+            key="primary"
           />
           <Checkbox
             label="Nullable"
             placeholder="Nullable"
             {...form.getInputProps('nullable')}
+            key="nullable"
           />
           <Checkbox
             label="Generated"
             placeholder="Generated"
             {...form.getInputProps('generated')}
+            key="generated"
           />
         </Grid.Col>
         <Grid.Col span={6} className="flex flex-col gap-2">
@@ -182,6 +198,7 @@ export const CreateAttributeForm = ({
             label="Unique"
             placeholder="Unique"
             {...form.getInputProps('unique')}
+            key="unique"
           />
           <Checkbox
             label="Foreign"
@@ -193,6 +210,7 @@ export const CreateAttributeForm = ({
                 form.getInputProps('foreign').onChange(event);
               }
             }}
+            key="foreign"
           />
         </Grid.Col>
       </Grid>

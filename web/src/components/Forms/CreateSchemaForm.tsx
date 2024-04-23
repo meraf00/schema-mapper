@@ -35,6 +35,8 @@ export const CreateSchemaForm = ({ close }: CreateSchemaFormProps) => {
         label="Name"
         placeholder="Name"
         {...form.getInputProps('name')}
+        key={'name'}
+        required
       />
 
       <Button type="submit" mt="sm">

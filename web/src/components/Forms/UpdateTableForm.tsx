@@ -1,20 +1,25 @@
-import { cacheKeys, createSchema, createTable } from '@/api';
+import { cacheKeys, getTable, updateTable } from '@/api';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
-export interface CreateTableFormProps {
-  schemaId: string;
+export interface UpdateTableFormProps {
+  tableId: string;
   close: () => void;
 }
 
-export const CreateTableForm = ({ schemaId, close }: CreateTableFormProps) => {
+export const UpdateTableForm = ({ tableId, close }: UpdateTableFormProps) => {
   const queryClient = useQueryClient();
+
+  const { isPending, error, data, isFetching } = useQuery({
+    queryKey: [cacheKeys.tables, tableId],
+    queryFn: () => getTable(tableId),
+  });
 
   const form = useForm({
     mode: 'uncontrolled',
-    initialValues: { name: '' },
+    initialValues: { name: data?.name ?? '' },
 
     validate: {
       name: (value) =>
@@ -23,12 +28,16 @@ export const CreateTableForm = ({ schemaId, close }: CreateTableFormProps) => {
   });
 
   const mutation = useMutation({
-    mutationFn: (name: string) => createTable(schemaId, name),
+    mutationFn: (name: string) => updateTable(tableId, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
       close();
     },
   });
+
+  if (data) {
+    form.setFieldValue('name', data?.name);
+  }
 
   return (
     <form onSubmit={form.onSubmit((data) => mutation.mutate(data.name))}>
