@@ -18,7 +18,9 @@ export class SchemaService {
   }
 
   async findAll(): Promise<Schema[]> {
-    return this.schemaRepository.find();
+    return this.schemaRepository.find({
+      relations: ['tables', 'tables.attributes'],
+    });
   }
 
   async findOne(id: string): Promise<Schema> {

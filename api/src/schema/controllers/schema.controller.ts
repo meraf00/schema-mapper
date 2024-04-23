@@ -12,8 +12,8 @@ import { SchemaService } from '../services/schema.service';
 import { CreateSchemaDto } from '../dto/request.dto';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('schema')
-@Controller('schema')
+@ApiTags('schemas')
+@Controller('schemas')
 export class SchemaController {
   constructor(private schemaService: SchemaService) {}
 

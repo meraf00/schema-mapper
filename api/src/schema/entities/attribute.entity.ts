@@ -24,6 +24,11 @@ export enum AttributeType {
   TIMESTAMP = 'TIMESTAMP',
 }
 
+export enum RelationType {
+  ONE_TO_ONE = 'ONE_TO_ONE',
+  MANY_TO_ONE = 'MANY_TO_ONE',
+}
+
 @Entity()
 @Unique(['name', 'tableId'])
 export class Attribute {
@@ -58,6 +63,13 @@ export class Attribute {
   @OneToOne(() => Attribute, { nullable: true, cascade: true })
   @JoinColumn()
   references: Attribute;
+
+  @Column({
+    type: 'enum',
+    enum: RelationType,
+    nullable: true,
+  })
+  relationType: RelationType;
 
   @ManyToOne(() => Table, (table) => table.attributes, { nullable: false })
   table: Table;

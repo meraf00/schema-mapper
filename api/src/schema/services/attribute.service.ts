@@ -42,6 +42,7 @@ export class AttributeService {
   async findOne(id: string): Promise<Attribute> {
     return this.attributeRepository.findOne({
       where: { id },
+      relations: ['references'],
     });
   }
 

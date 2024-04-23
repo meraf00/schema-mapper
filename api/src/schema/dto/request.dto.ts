@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
+  IsEnum,
   IsOptional,
   IsString,
   IsUUID,
@@ -72,6 +73,11 @@ export class CreateAttributeDto {
   @ValidateIf((o) => o.isForeign === true)
   @IsUUID()
   references: string;
+
+  @ApiProperty()
+  @ValidateIf((o) => o.isForeign === true)
+  @IsEnum(['ONE_TO_ONE', 'MANY_TO_ONE'])
+  relationType: string;
 }
 
 export class UpdateAttributeDto {

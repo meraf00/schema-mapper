@@ -15,8 +15,8 @@ import { InvalidAttributeTypeException } from '../exceptions/exceptions';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AttributeService } from '../services/attribute.service';
 
-@ApiTags('attribute')
-@Controller('attribute')
+@ApiTags('attributes')
+@Controller('attributes')
 export class AttributeController {
   constructor(private attributeService: AttributeService) {}
 
