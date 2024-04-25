@@ -3,7 +3,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
@@ -60,7 +59,10 @@ export class Attribute {
   @Column({ default: false })
   isGenerated: boolean;
 
-  @OneToOne(() => Attribute, { nullable: true, cascade: true })
+  @ManyToOne(() => Attribute, {
+    nullable: true,
+    cascade: true,
+  })
   @JoinColumn()
   references: Attribute;
 

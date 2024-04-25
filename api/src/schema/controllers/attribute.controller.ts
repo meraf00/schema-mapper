@@ -10,7 +10,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateAttributeDto } from '../dto/request.dto';
+import { CreateAttributeDto, UpdateAttributeDto } from '../dto/request.dto';
 import { InvalidAttributeTypeException } from '../exceptions/exceptions';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { AttributeService } from '../services/attribute.service';
@@ -53,7 +53,7 @@ export class AttributeController {
   @ApiParam({ name: 'id', type: String })
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateAttributeDto: CreateAttributeDto,
+    @Body() updateAttributeDto: UpdateAttributeDto,
   ) {
     try {
       return await this.attributeService.update(id, updateAttributeDto);

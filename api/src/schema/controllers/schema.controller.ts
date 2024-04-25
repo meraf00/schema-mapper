@@ -7,9 +7,10 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
 } from '@nestjs/common';
 import { SchemaService } from '../services/schema.service';
-import { CreateSchemaDto } from '../dto/request.dto';
+import { CreateSchemaDto, UpdateSchemaDto } from '../dto/request.dto';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('schemas')
@@ -42,6 +43,30 @@ export class SchemaController {
     }
   }
 
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Schema id',
+  })
+  @Put(':id')
+  async update(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateSchemaDto: UpdateSchemaDto,
+  ) {
+    try {
+      return await this.schemaService.update(id, updateSchemaDto);
+    } catch (e) {
+      throw new NotFoundException(e.message);
+    }
+  }
+
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Schema id',
+  })
   @Delete(':id')
   async delete(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     try {

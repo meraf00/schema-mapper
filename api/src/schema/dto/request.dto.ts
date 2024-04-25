@@ -120,4 +120,9 @@ export class UpdateAttributeDto {
   @IsUUID()
   @IsOptional()
   references: string;
+
+  @ApiProperty()
+  @ValidateIf((o) => o.isForeign === true)
+  @IsEnum(['ONE_TO_ONE', 'MANY_TO_ONE'])
+  relationType: string;
 }

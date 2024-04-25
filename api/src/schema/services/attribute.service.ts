@@ -32,6 +32,12 @@ export class AttributeService {
       throw new InvalidAttributeTypeException(createAttributeDto.type);
     }
 
+    attribute.isForeign = createAttributeDto.isForeign;
+    attribute.isGenerated = createAttributeDto.isGenerated;
+    attribute.isNullable = createAttributeDto.isNullable;
+    attribute.isPrimary = createAttributeDto.isPrimary;
+    attribute.isUnique = createAttributeDto.isUnique;
+
     return this.attributeRepository.save(attribute);
   }
 
@@ -62,7 +68,9 @@ export class AttributeService {
         throw new InvalidAttributeTypeException(update.type);
       }
     }
-    await this.attributeRepository.update(id, update);
+    const a = await this.attributeRepository.update(id, update);
+
+    console.log(updateAttributeDto, a);
 
     return this.findOne(id);
   }
