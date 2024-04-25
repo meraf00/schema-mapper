@@ -40,6 +40,11 @@ export const getSchema = async (id: string) => {
   return response.data;
 };
 
+export const getSchemaCode = async (id: string) => {
+  const response = await instance.get(`schemas/${id}/code`);
+  return response.data;
+};
+
 export const getSchemas = async () => {
   const response = await instance.get('schemas');
   return response.data;

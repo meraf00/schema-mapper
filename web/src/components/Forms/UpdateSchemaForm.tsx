@@ -1,7 +1,8 @@
 'use client';
 
-import { cacheKeys, getSchema, updateSchema } from '@/api';
+import { cacheKeys, getSchema, updateSchema, getSchemaCode } from '@/api';
 import { useAppSelector } from '@/lib/hooks';
+import { CodeHighlight, CodeHighlightTabs } from '@mantine/code-highlight';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -15,6 +16,11 @@ export const UpdateSchemaForm = () => {
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: [cacheKeys.schemas, schema!],
     queryFn: () => getSchema(schema!),
+  });
+
+  const schemaCode = useQuery({
+    queryKey: [cacheKeys.schemas, schema!, 'code'],
+    queryFn: () => getSchemaCode(schema!),
   });
 
   const [name, setName] = React.useState('');
@@ -43,24 +49,34 @@ export const UpdateSchemaForm = () => {
   }, [data]);
 
   return (
-    <form
-      onSubmit={form.onSubmit((data) =>
-        mutation.mutate({ id: schema!, name: name })
-      )}
-    >
-      <TextInput
-        label="Name"
-        placeholder="Name"
-        value={name}
-        {...form.getInputProps('name')}
-        key={'schema-name'}
-        onChange={(event) => setName(event.currentTarget.value)}
-        required
-      />
+    <>
+      <form
+        onSubmit={form.onSubmit((data) =>
+          mutation.mutate({ id: schema!, name: name })
+        )}
+      >
+        <TextInput
+          label="Name"
+          placeholder="Name"
+          value={name}
+          {...form.getInputProps('name')}
+          key={'schema-name'}
+          onChange={(event) => setName(event.currentTarget.value)}
+          required
+        />
 
-      <Button type="submit" mt="sm">
-        Save
-      </Button>
-    </form>
+        <Button type="submit" mt="sm">
+          Save
+        </Button>
+      </form>
+
+      <div className="mt-5 flex w-full">
+        <CodeHighlightTabs
+          code={[
+            { fileName: name, code: schemaCode.data ?? '', language: 'ts' },
+          ]}
+        />
+      </div>
+    </>
   );
 };
