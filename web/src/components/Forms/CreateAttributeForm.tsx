@@ -78,9 +78,9 @@ export const CreateAttributeForm = ({
           isGenerated: data.generated ?? false,
           isUnique: data.unique ?? data.primary ?? false,
           isForeign: data.foreign ?? false,
-          tableId,
-          references: data['referenced-table'],
+          references: data['referenced-attribute'],
           relationType: data['relation-type'],
+          tableId,
         })
       )}
     >

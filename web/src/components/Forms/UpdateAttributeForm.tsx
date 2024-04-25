@@ -1,27 +1,24 @@
 'use client';
 
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { cacheKeys, getAttribute, getTable, updateAttribute } from '@/api';
+import { Button, Checkbox, Grid, Select, TextInput } from '@mantine/core';
+import React, { useEffect, useState } from 'react';
 import { Attribute } from '@/lib/model/attribute';
 import { Schema } from '@/lib/model/schema';
-
 import { Table } from '@/lib/model/table';
-import { Button, Checkbox, Grid, Select, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
 
 export interface UpdateAttributeFormProps {
   attributeId: string;
   schema: Schema;
   tableId: string;
-  close: () => void;
 }
 
 export const UpdateAttributeForm = ({
   tableId,
   attributeId,
   schema,
-  close,
 }: UpdateAttributeFormProps) => {
   const queryClient = useQueryClient();
 
@@ -96,7 +93,6 @@ export const UpdateAttributeForm = ({
     mutationFn: (attribute: any) => updateAttribute(attributeId, attribute),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
-      close();
     },
   });
 

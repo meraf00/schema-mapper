@@ -2,14 +2,13 @@ import { cacheKeys, getTable, updateTable } from '@/api';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export interface UpdateTableFormProps {
   tableId: string;
-  close: () => void;
 }
 
-export const UpdateTableForm = ({ tableId, close }: UpdateTableFormProps) => {
+export const UpdateTableForm = ({ tableId }: UpdateTableFormProps) => {
   const queryClient = useQueryClient();
 
   const { isPending, error, data, isFetching } = useQuery({
@@ -31,21 +30,25 @@ export const UpdateTableForm = ({ tableId, close }: UpdateTableFormProps) => {
     mutationFn: (name: string) => updateTable(tableId, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
-      close();
     },
   });
 
-  if (data) {
-    form.setFieldValue('name', data?.name);
-  }
+  const [name, setName] = React.useState('');
+
+  useEffect(() => {
+    if (data) {
+      setName(data.name);
+    }
+  }, [data]);
 
   return (
-    <form onSubmit={form.onSubmit((data) => mutation.mutate(data.name))}>
+    <form onSubmit={form.onSubmit((data) => mutation.mutate(name))}>
       <TextInput
         label="Name"
         placeholder="Name"
-        {...form.getInputProps('name')}
-        key={'name'}
+        value={name}
+        key={'table-name'}
+        onChange={(event) => setName(event.currentTarget.value)}
         required
       />
 

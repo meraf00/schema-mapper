@@ -5,13 +5,9 @@ import { useAppSelector } from '@/lib/hooks';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import React from 'react';
+import React, { useEffect } from 'react';
 
-export interface UpdateSchemaFormProps {
-  close: () => void;
-}
-
-export const UpdateSchemaForm = ({ close }: UpdateSchemaFormProps) => {
+export const UpdateSchemaForm = () => {
   const queryClient = useQueryClient();
 
   const { schema } = useAppSelector((state) => state.entity);
@@ -21,9 +17,10 @@ export const UpdateSchemaForm = ({ close }: UpdateSchemaFormProps) => {
     queryFn: () => getSchema(schema!),
   });
 
+  const [name, setName] = React.useState('');
+
   const form = useForm({
     mode: 'uncontrolled',
-    initialValues: { name: data?.name ?? '' },
 
     validate: {
       name: (value) =>
@@ -36,23 +33,28 @@ export const UpdateSchemaForm = ({ close }: UpdateSchemaFormProps) => {
       updateSchema(schema.id, schema.name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
-      close();
     },
   });
 
-  form.setFieldValue('name', data?.name);
+  useEffect(() => {
+    if (data) {
+      setName(data.name);
+    }
+  }, [data]);
 
   return (
     <form
       onSubmit={form.onSubmit((data) =>
-        mutation.mutate({ id: schema!, name: data.name })
+        mutation.mutate({ id: schema!, name: name })
       )}
     >
       <TextInput
         label="Name"
         placeholder="Name"
+        value={name}
         {...form.getInputProps('name')}
-        key={'name'}
+        key={'schema-name'}
+        onChange={(event) => setName(event.currentTarget.value)}
         required
       />
 

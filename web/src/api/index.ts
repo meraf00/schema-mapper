@@ -1,4 +1,3 @@
-import { AttributeType, RelationType } from '@/lib/model/attribute';
 import axios from 'axios';
 
 const instance = axios.create({
@@ -85,7 +84,6 @@ export const updateAttribute = async (
   attribId: string,
   attribute: AttributeData
 ) => {
-  console.log(attribute, attribId);
   try {
     const response = await instance.put(`attributes/${attribId}`, attribute);
     return response.data;

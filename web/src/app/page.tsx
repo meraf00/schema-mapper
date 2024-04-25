@@ -25,14 +25,14 @@ export default function Home() {
   let schemas: Schema[] = data ?? [];
 
   if (active.id === null) {
-    title = 'Welcome to your database!';
+    title = '';
     form = null;
   } else if (active.schema === active.id) {
     title = 'Update Schema';
-    form = <UpdateSchemaForm close={close} />;
+    form = <UpdateSchemaForm />;
   } else if (active.id === active.table) {
     title = 'Update Table';
-    form = <UpdateTableForm tableId={active.table!} close={close} />;
+    form = <UpdateTableForm tableId={active.table!} />;
   } else if (active.attribute === active.id) {
     title = 'Update Attribute';
     form = (
@@ -40,7 +40,6 @@ export default function Home() {
         attributeId={active.attribute!}
         schema={schemas.find((s) => s.id === active.schema)!}
         tableId={active.table!}
-        close={close}
       />
     );
   }
