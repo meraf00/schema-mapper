@@ -12,11 +12,15 @@ import {
 import { SchemaService } from '../services/schema.service';
 import { CreateSchemaDto, UpdateSchemaDto } from '../dto/request.dto';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { CodeGenerationService } from '../services/codegeneration.service';
 
 @ApiTags('schemas')
 @Controller('schemas')
 export class SchemaController {
-  constructor(private schemaService: SchemaService) {}
+  constructor(
+    private schemaService: SchemaService,
+    private codeGenerationService: CodeGenerationService,
+  ) {}
 
   @Post()
   async create(@Body() createSchemaDto: CreateSchemaDto) {
@@ -71,6 +75,23 @@ export class SchemaController {
   async delete(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     try {
       return await this.schemaService.delete(id);
+    } catch (e) {
+      throw new NotFoundException(e.message);
+    }
+  }
+
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'Schema id',
+  })
+  @Get(':id/code')
+  async generateCode(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    try {
+      return await this.codeGenerationService.generateCode(id);
     } catch (e) {
       throw new NotFoundException(e.message);
     }

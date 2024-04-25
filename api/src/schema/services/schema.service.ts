@@ -26,7 +26,13 @@ export class SchemaService {
   async findOne(id: string): Promise<Schema> {
     return this.schemaRepository.findOne({
       where: { id },
-      relations: ['tables', 'tables.attributes'],
+      relations: [
+        'tables',
+        'tables.attributes',
+        'tables.attributes.table',
+        'tables.attributes.references.table',
+        'tables.attributes.references',
+      ],
     });
   }
 

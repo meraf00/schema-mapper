@@ -68,9 +68,7 @@ export class AttributeService {
         throw new InvalidAttributeTypeException(update.type);
       }
     }
-    const a = await this.attributeRepository.update(id, update);
-
-    console.log(updateAttributeDto, a);
+    await this.attributeRepository.update(id, update);
 
     return this.findOne(id);
   }
