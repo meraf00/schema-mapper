@@ -42,6 +42,7 @@ export const UpdateAttributeForm = ({
     unique: data?.isUnique ?? false,
     foreign: data?.isForeign ?? false,
     'referenced-table': tableQuery.data?.id ?? '',
+
     'referenced-attribute': data?.references?.id ?? '',
     'relation-type': data?.relationType ?? '',
   });
@@ -56,6 +57,7 @@ export const UpdateAttributeForm = ({
         generated: data.isGenerated,
         unique: data.isUnique,
         foreign: data.isForeign,
+        backref: data.backref,
         'referenced-table': tableQuery.data?.id,
         'referenced-attribute': data.references?.id,
         'relation-type': data.relationType,
@@ -81,6 +83,7 @@ export const UpdateAttributeForm = ({
       nullable: (value) => {},
       generated: (value) => {},
       unique: (value) => {},
+      backref: (value) => {},
       foreign: (value) => {},
       'referenced-table': (value) => {},
       'referenced-attribute': (value) => {},
@@ -120,6 +123,7 @@ export const UpdateAttributeForm = ({
           isForeign: values.foreign ?? false,
           references: values['referenced-attribute'],
           relationType: values['relation-type'],
+          backref: values.backref,
           tableId,
         })
       )}
@@ -222,6 +226,20 @@ export const UpdateAttributeForm = ({
               setValues((values: any) => ({
                 ...values,
                 'relation-type': event,
+              }));
+            }}
+          />
+
+          <TextInput
+            value={values.backref}
+            label="Backref"
+            placeholder="Backref"
+            {...form.getInputProps('backref')}
+            key="backref"
+            onChange={(event) => {
+              setValues((values: any) => ({
+                ...values,
+                backref: event.target.value,
               }));
             }}
           />

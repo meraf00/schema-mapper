@@ -27,6 +27,7 @@ export interface AttributeData {
   isGenerated: boolean;
   references?: string;
   relationType?: 'ONE_TO_ONE' | 'MANY_TO_ONE';
+  backref?: string;
 }
 
 export const cacheKeys = {
@@ -65,13 +66,30 @@ export const getTable = async (id: string) => {
   return response.data;
 };
 
-export const createTable = async (schemaId: string, name: string) => {
-  const response = await instance.post(`tables`, { name, schemaId });
+export const createTable = async (
+  schemaId: string,
+  name: string,
+  aggregate: boolean
+) => {
+  const response = await instance.post(`tables`, {
+    name,
+    schemaId,
+    isAggregate: aggregate,
+  });
   return response.data;
 };
 
-export const updateTable = async (id: string, name: string) => {
-  const response = await instance.put(`tables/${id}`, { name });
+export const updateTable = async (
+  id: string,
+  name: string,
+  aggregate: boolean
+) => {
+  console.log('akdsjfhakjsdhfjkahsdfjk');
+  const response = await instance.put(`tables/${id}`, {
+    name,
+    isAggregate: aggregate,
+  });
+
   return response.data;
 };
 

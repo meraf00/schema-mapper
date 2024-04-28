@@ -39,6 +39,8 @@ export class Attribute {
 
   relationType?: RelationType;
 
+  backref?: string;
+
   constructor(
     id: string,
     name: string,
@@ -49,7 +51,8 @@ export class Attribute {
     isForeign: boolean,
     isGenerated: boolean,
     relationType?: RelationType,
-    references?: Attribute
+    references?: Attribute,
+    backref?: string
   ) {
     this.id = id;
     this.name = name;
@@ -61,5 +64,6 @@ export class Attribute {
     this.isGenerated = isGenerated;
     this.references = references;
     this.relationType = relationType;
+    this.backref = backref;
   }
 }

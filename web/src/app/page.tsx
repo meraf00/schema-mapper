@@ -105,8 +105,8 @@ export default function Home() {
         className="w-1/4 px-2 border-r h-full sticky top-0"
         schemas={schemas}
       />
-      <div className="flex flex-col gap-5 p-2 w-full ">
-        <div className="flex justify-between items-center sticky top-0 z-[1000] bg-white ">
+      <div className="flex flex-col gap-5 p-2 pt-0 w-full ">
+        <div className="flex justify-between items-center sticky top-0 z-[10] bg-white ">
           <h1 className="text-2xl font-bold">{title}</h1>
           {active.id && (
             <Button
@@ -129,7 +129,7 @@ export default function Home() {
           )}
         </div>
 
-        <div className="w-1/3">{form}</div>
+        <div className="w-1/3 pb-10">{form}</div>
       </div>
     </main>
   );

@@ -1,5 +1,5 @@
 import { cacheKeys, getTable, updateTable } from '@/api';
-import { Button, TextInput } from '@mantine/core';
+import { Button, Checkbox, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -28,7 +28,7 @@ export const UpdateTableForm = ({ tableId }: UpdateTableFormProps) => {
   });
 
   const mutation = useMutation({
-    mutationFn: (name: string) => updateTable(tableId, name),
+    mutationFn: (data: any) => updateTable(tableId, data.name, data.aggregate),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
       notifications.show({
@@ -40,15 +40,26 @@ export const UpdateTableForm = ({ tableId }: UpdateTableFormProps) => {
   });
 
   const [name, setName] = React.useState('');
+  const [aggregate, setAggregate] = React.useState(false);
 
   useEffect(() => {
     if (data) {
       setName(data.name);
+      setAggregate(data.isAggregate);
     }
   }, [data]);
 
+  // console.log(data, aggregate);
+
   return (
-    <form onSubmit={form.onSubmit((data) => mutation.mutate(name))}>
+    <form
+      onSubmit={() => {
+        mutation.mutate({
+          name,
+          aggregate,
+        });
+      }}
+    >
       <TextInput
         label="Name"
         placeholder="Name"
@@ -56,9 +67,21 @@ export const UpdateTableForm = ({ tableId }: UpdateTableFormProps) => {
         key={'table-name'}
         onChange={(event) => setName(event.currentTarget.value)}
         required
+        className="mb-3"
       />
 
-      <Button type="submit" mt="sm">
+      <Checkbox
+        checked={aggregate}
+        label="Aggregate"
+        placeholder="Aggregate"
+        {...form.getInputProps('aggregate', { type: 'checkbox' })}
+        key="primary"
+        onChange={(event) => {
+          setAggregate((value: boolean) => !value);
+        }}
+      />
+
+      <Button type="submit" mt="lg">
         Save
       </Button>
     </form>
