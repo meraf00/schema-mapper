@@ -16,7 +16,11 @@ export class GeneratorService {
     return this.queue.client.status;
   }
 
+<<<<<<< HEAD
   async getJobs() {
+=======
+  async getJob() {
+>>>>>>> ff2e4b9 (feat: add entity code generator module)
     return await this.queue.getJobs([
       'waiting',
       'active',
