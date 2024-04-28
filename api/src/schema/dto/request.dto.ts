@@ -28,12 +28,20 @@ export class CreateTableDto {
   @ApiProperty()
   @IsUUID()
   schemaId: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  isAggregate: boolean;
 }
 
 export class UpdateTableDto {
   @ApiProperty()
   @IsString()
   name: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  isAggregate: boolean;
 }
 
 export class CreateAttributeDto {
