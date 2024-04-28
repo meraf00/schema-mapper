@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
 import { GeneratorModule } from './generator/generator.module';
 import { BullModule } from '@nestjs/bull';
+import { CatModule } from './cat/cat.module';
 
 @Module({
   imports: [
@@ -32,6 +33,8 @@ import { BullModule } from '@nestjs/bull';
     CommonModule,
 
     GeneratorModule,
+
+    CatModule,
   ],
 })
 export class AppModule {}
