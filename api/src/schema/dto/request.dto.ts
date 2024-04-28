@@ -78,6 +78,11 @@ export class CreateAttributeDto {
   @ValidateIf((o) => o.isForeign === true)
   @IsEnum(['ONE_TO_ONE', 'MANY_TO_ONE'])
   relationType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  backref: string;
 }
 
 export class UpdateAttributeDto {
@@ -125,4 +130,9 @@ export class UpdateAttributeDto {
   @ValidateIf((o) => o.isForeign === true)
   @IsEnum(['ONE_TO_ONE', 'MANY_TO_ONE'])
   relationType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  backref: string;
 }

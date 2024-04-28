@@ -22,10 +22,6 @@ export class TableService {
   }
 
   async create(createTableDto: CreateTableDto): Promise<Table> {
-    // const table = this.tableRepository.create();
-    // table.name = createTableDto.name;
-    // table.schema = { id: createTableDto.schemaId } as Schema;
-
     const table = this.tableRepository.create(createTableDto);
     return this.tableRepository.save(table);
   }
