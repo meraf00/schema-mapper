@@ -2,9 +2,10 @@
 
 import { cacheKeys, getSchema, updateSchema, getSchemaCode } from '@/api';
 import { useAppSelector } from '@/lib/hooks';
-import { CodeHighlight, CodeHighlightTabs } from '@mantine/code-highlight';
+import { CodeHighlightTabs } from '@mantine/code-highlight';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 
@@ -30,7 +31,7 @@ export const UpdateSchemaForm = () => {
 
     validate: {
       name: (value) =>
-        value.length < 1 ? 'Schema name must have at least 1 letter' : null,
+        name.length < 1 ? 'Schema name must have at least 1 letter' : null,
     },
   });
 
@@ -39,6 +40,11 @@ export const UpdateSchemaForm = () => {
       updateSchema(schema.id, schema.name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
+      notifications.show({
+        title: 'Success',
+        message: 'Schema updated successfully',
+        color: 'blue',
+      });
     },
   });
 

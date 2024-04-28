@@ -7,6 +7,7 @@ import { Schema } from '@/lib/model/schema';
 import { Table } from '@/lib/model/table';
 import { Button, Checkbox, Grid, Select, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 
@@ -61,6 +62,14 @@ export const CreateAttributeForm = ({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [cacheKeys.schemas, cacheKeys.attributes],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [cacheKeys.schemas],
+      });
+      notifications.show({
+        title: 'Success',
+        message: 'Attribute created successfully',
+        color: 'blue',
       });
       close();
     },

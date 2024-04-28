@@ -1,6 +1,10 @@
 'use client';
 import React, { useState } from 'react';
-import { IconChevronDown, IconCircle } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  IconCircle,
+} from '@tabler/icons-react';
 
 export interface NodeProps {
   children?: React.ReactNode;
@@ -27,14 +31,25 @@ export const Node = ({
         }}
       >
         {children ? (
-          <IconChevronDown
-            size={16}
-            className="mr-2 hover:text-blue-500"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsOpen((state) => !state);
-            }}
-          />
+          isOpen ? (
+            <IconChevronDown
+              size={16}
+              className="mr-2 hover:text-blue-500"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen((state) => !state);
+              }}
+            />
+          ) : (
+            <IconChevronRight
+              size={16}
+              className="mr-2 hover:text-blue-500"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen((state) => !state);
+              }}
+            />
+          )
         ) : (
           <IconCircle size={8} className="mr-3 ml-1" />
         )}

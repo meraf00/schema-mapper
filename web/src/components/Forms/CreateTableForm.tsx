@@ -1,6 +1,7 @@
 import { cacheKeys, createSchema, createTable } from '@/api';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
@@ -26,6 +27,11 @@ export const CreateTableForm = ({ schemaId, close }: CreateTableFormProps) => {
     mutationFn: (name: string) => createTable(schemaId, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
+      notifications.show({
+        title: 'Success',
+        message: 'Table created successfully',
+        color: 'blue',
+      });
       close();
     },
   });

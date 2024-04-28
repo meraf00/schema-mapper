@@ -96,3 +96,18 @@ export const updateAttribute = async (
     console.log(e);
   }
 };
+
+export const deleteAttribute = async (id: string) => {
+  const response = await instance.delete(`attributes/${id}`);
+  return response.data;
+};
+
+export const deleteTable = async (id: string) => {
+  const response = await instance.delete(`tables/${id}`);
+  return response.data;
+};
+
+export const deleteSchema = async (id: string) => {
+  const response = await instance.delete(`schemas/${id}`);
+  return response.data;
+};

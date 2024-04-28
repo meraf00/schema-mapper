@@ -8,6 +8,7 @@ import { Attribute } from '@/lib/model/attribute';
 import { Schema } from '@/lib/model/schema';
 import { Table } from '@/lib/model/table';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 
 export interface UpdateAttributeFormProps {
   attributeId: string;
@@ -93,6 +94,11 @@ export const UpdateAttributeForm = ({
     mutationFn: (attribute: any) => updateAttribute(attributeId, attribute),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
+      notifications.show({
+        title: 'Success',
+        message: 'Attribute updated successfully',
+        color: 'blue',
+      });
     },
   });
 

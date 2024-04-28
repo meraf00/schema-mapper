@@ -1,6 +1,7 @@
 import { cacheKeys, getTable, updateTable } from '@/api';
 import { Button, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 
@@ -30,6 +31,11 @@ export const UpdateTableForm = ({ tableId }: UpdateTableFormProps) => {
     mutationFn: (name: string) => updateTable(tableId, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
+      notifications.show({
+        title: 'Success',
+        message: 'Table updated successfully',
+        color: 'blue',
+      });
     },
   });
 
