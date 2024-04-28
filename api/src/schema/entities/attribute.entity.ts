@@ -28,7 +28,7 @@ export enum RelationType {
   MANY_TO_ONE = 'MANY_TO_ONE',
 }
 
-@Entity()
+@Entity({ name: 'attribute' })
 @Unique(['name', 'tableId'])
 export class Attribute {
   @PrimaryGeneratedColumn('uuid')
@@ -73,7 +73,10 @@ export class Attribute {
   })
   relationType: RelationType;
 
-  @ManyToOne(() => Table, (table) => table.attributes, { nullable: false })
+  @ManyToOne(() => Table, (table) => table.attributes, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   table: Table;
 
   @Column()

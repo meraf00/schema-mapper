@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -18,9 +19,6 @@ export class Table {
   @Column()
   name: string;
 
-  @ManyToOne(() => Schema, (schema) => schema.tables)
-  schema: Schema;
-
   @OneToMany(() => Attribute, (attribute) => attribute.table, {
     onDelete: 'CASCADE',
   })
@@ -28,4 +26,8 @@ export class Table {
 
   @Column()
   schemaId: string;
+
+  @ManyToOne(() => Schema, (schema) => schema.tables, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'schemaId' })
+  schema: Schema;
 }

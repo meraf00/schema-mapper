@@ -15,19 +15,23 @@ export class TableService {
   async findOne(id: string): Promise<Table> {
     return this.tableRepository.findOne({
       where: { id },
-      relations: ['attributes'],
+      relations: {
+        attributes: true,
+      },
     });
   }
 
   async create(createTableDto: CreateTableDto): Promise<Table> {
-    const table = this.tableRepository.create();
-    table.name = createTableDto.name;
-    table.schema = { id: createTableDto.schemaId } as Schema;
+    // const table = this.tableRepository.create();
+    // table.name = createTableDto.name;
+    // table.schema = { id: createTableDto.schemaId } as Schema;
+
+    const table = this.tableRepository.create(createTableDto);
     return this.tableRepository.save(table);
   }
 
   async findAll(): Promise<Table[]> {
-    return this.tableRepository.find();
+    return await this.tableRepository.find();
   }
 
   async update(id: string, updateTableDto: UpdateTableDto): Promise<Table> {

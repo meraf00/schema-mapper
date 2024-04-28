@@ -9,6 +9,6 @@ export class Schema {
   @Column()
   name: string;
 
-  @OneToMany(() => Table, (table) => table.schema)
+  @OneToMany(() => Table, (table) => table.schema, { onDelete: 'CASCADE' })
   tables: Table[];
 }

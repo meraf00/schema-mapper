@@ -76,6 +76,7 @@ export class SchemaController {
     try {
       return await this.schemaService.delete(id);
     } catch (e) {
+      console.log(e);
       throw new NotFoundException(e.message);
     }
   }
