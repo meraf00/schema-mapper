@@ -1,10 +1,6 @@
 import { Table } from 'src/schema/entities';
 import { ICodeFile, IImportable } from './Code';
-import {
-  ControllerDecorator,
-  NotFoundExceptionImport,
-  PostDecorator,
-} from './Importables';
+import { ControllerDecorator, NotFoundExceptionImport } from './Importables';
 import { AttributeCode } from './AttributeCode';
 
 export class ControllerCode implements ICodeFile {
