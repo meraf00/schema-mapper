@@ -8,6 +8,8 @@ import { DtoFolder } from '../entity/DtoFolder';
 import { ModuleFolder } from '../entity/ModuleFolder';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as prettier from 'prettier';
+import * as archiver from 'archiver';
 
 @Processor(CODE_GENERATION)
 export class GeneratorWorker {
@@ -113,7 +115,7 @@ export class GeneratorWorker {
     const fileMap = new Map<string, string>();
 
     fileMap.set(
-      'src/app.module.ts',
+      'src/app.module',
       `import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ${schema.name}Module } from './${schema.name}/${schema.name}.module';
@@ -142,7 +144,36 @@ export class AppModule {}`,
     return fileMap;
   }
 
-  async writeFiles(schema: Schema, files: Map<string, string>) {
+  async generateZipFile(
+    zipFilepath: string,
+    folderPath: string,
+    outputFolderPath: string,
+    onComplete: (filePath: string) => void,
+    onError: (err: Error) => void,
+  ) {
+    var ar = archiver.create('zip', {});
+
+    var output = fs.createWriteStream(zipFilepath, { flags: 'w' });
+    output.on('close', function () {
+      console.log('ZIP file written to:', zipFilepath);
+      return onComplete(zipFilepath);
+    });
+
+    ar.on('error', function (err) {
+      console.error('error compressing: ', err);
+      return onError(err);
+    });
+
+    ar.pipe(output);
+    ar.directory(path.normalize(folderPath + '/'), outputFolderPath).finalize();
+  }
+
+  async writeFiles(
+    schema: Schema,
+    files: Map<string, string>,
+    onComplete: (filePath: string) => void,
+    onError: (err: Error) => void,
+  ) {
     const baseFolder = path.join(process.cwd(), 'storage/base');
 
     const schemaFolder = path.join(process.cwd(), `/storage/${schema.id}`);
@@ -161,18 +192,33 @@ export class AppModule {}`,
 
       fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-      fs.writeFileSync(filePath, content, { encoding: 'utf-8' });
+      try {
+        fs.writeFileSync(
+          filePath,
+          await prettier.format(content, { parser: 'typescript' }),
+          {
+            encoding: 'utf-8',
+          },
+        );
+      } catch (e) {
+        console.log(filePath, e.message);
+        fs.writeFileSync(filePath, content, {
+          encoding: 'utf-8',
+        });
+      }
     }
 
-    const util = require('util');
-    const exec = util.promisify(require('child_process').exec);
+    const zipFilepath = path.join(process.cwd(), `storage/${schema.id}.zip`);
+    const outputFolderPath = path.join(process.cwd(), `storage`);
+    const folderPath = path.join(process.cwd(), `storage/${schema.id}`);
 
-    async function ls() {
-      const { stdout, stderr } = await exec('npx prettier --write .');
-      console.log('stdout:', stdout);
-      console.log('stderr:', stderr);
-    }
-    await ls();
+    this.generateZipFile(
+      zipFilepath,
+      folderPath,
+      outputFolderPath,
+      onComplete,
+      onError,
+    );
   }
 
   @Process()
@@ -204,11 +250,15 @@ export class AppModule {}`,
       files.set(key, value);
     }
 
-    await this.writeFiles(schema, files);
+    const onComplete = async (filePath: string) => {
+      await job.moveToCompleted(filePath, true);
+    };
 
-    await job.progress(42);
+    const onError = async (err: Error) => {
+      await job.moveToFailed(err, true);
+    };
 
-    await job.moveToCompleted('done', true);
+    await this.writeFiles(schema, files, onComplete, onError);
   }
 
   @OnQueueCompleted()

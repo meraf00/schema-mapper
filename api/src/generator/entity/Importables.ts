@@ -7,7 +7,7 @@ const optionsToCode = (options: { [key: string]: any }): string => {
     code.push(`${key}: ${options[key]}`);
   }
 
-  if (code) {
+  if (code.length > 0) {
     return `{ ${code.join(', ')} }`;
   }
 
@@ -360,6 +360,37 @@ export class ParamDecorator implements IImportable {
 
   getCode(): string {
     return `@${this.name}('${this.param}', new ${this.pipe}())`;
+  }
+}
+
+export class BodyDecorator implements IImportable {
+  readonly name = 'Body';
+  readonly path = '@nestjs/common';
+
+  getCode(): string {
+    return `@${this.name}()`;
+  }
+}
+
+export class ParseUUIDPipeDecorator implements IImportable {
+  readonly name = 'ParseUUIDPipe';
+  readonly path = '@nestjs/common';
+
+  constructor(readonly options: { [key: string]: any }) {}
+
+  getCode(): string {
+    return `@${this.name}(${optionsToCode(this.options)})`;
+  }
+}
+
+export class ParseIntPipeDecorator implements IImportable {
+  readonly name = 'ParseIntPipe';
+  readonly path = '@nestjs/common';
+
+  constructor(readonly options: { [key: string]: any }) {}
+
+  getCode(): string {
+    return `@${this.name}(${optionsToCode(this.options)})`;
   }
 }
 

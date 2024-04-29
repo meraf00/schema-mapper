@@ -30,6 +30,10 @@ export class ServiceCode implements ICodeFile {
         name: 'Update' + table.name + 'Dto',
         path: '',
       } as IImportable,
+      {
+        name: table.name,
+        path: '',
+      } as IImportable,
     ];
     this.name = `${table.name}Service`;
     this.exports = [this.name];
@@ -49,7 +53,7 @@ export class ServiceCode implements ICodeFile {
 
     primaryKeyType = primaryKeyType || 'string';
 
-    const repoName = `${this.table.name}Repository`;
+    const repoName = `${this.table.name.toLocaleLowerCase()}Repository`;
 
     return `@Injectable()
 export class ${this.name} {
@@ -60,17 +64,17 @@ export class ${this.name} {
     }
 
     findOne(${primaryKey.name}: ${primaryKeyType}): Promise<${this.table.name}> {
-        return this.${repoName}.findOne({where: { ${primaryKey.name} });
+        return this.${repoName}.findOne({where: { ${primaryKey.name} }});
     }
 
     create(data: Create${this.table.name}Dto): Promise<${this.table.name}> {
         const entity = this.${repoName}.create(data);
-        return this.${repoName}.save(data);
+        return this.${repoName}.save(entity);
     }
 
     update(${primaryKey.name}: ${primaryKeyType}, data: Update${this.table.name}Dto): Promise<${this.table.name}> {
         this.${repoName}.update(${primaryKey.name}, data);
-        return this.${repoName}.findOne(${primaryKey.name});
+        return this.findOne(${primaryKey.name});
     }
 
     delete(${primaryKey.name}: ${primaryKeyType}): Promise<void> {

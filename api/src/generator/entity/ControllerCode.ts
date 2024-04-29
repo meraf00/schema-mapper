@@ -1,6 +1,16 @@
 import { Table } from 'src/schema/entities';
 import { ICodeFile, IImportable } from './Code';
-import { ControllerDecorator, NotFoundExceptionImport } from './Importables';
+import {
+  BodyDecorator,
+  ControllerDecorator,
+  DeleteDecorator,
+  GetDecorator,
+  NotFoundExceptionImport,
+  ParamDecorator,
+  ParseIntPipeDecorator,
+  PostDecorator,
+  PutDecorator,
+} from './Importables';
 import { AttributeCode } from './AttributeCode';
 
 export class ControllerCode implements ICodeFile {
@@ -17,6 +27,14 @@ export class ControllerCode implements ICodeFile {
     this.imports = [
       new ControllerDecorator(this.table.name),
       new NotFoundExceptionImport(),
+      new PostDecorator(),
+      new GetDecorator(),
+      new PutDecorator(),
+      new DeleteDecorator(),
+      new ParamDecorator('', ''),
+      new ParseIntPipeDecorator({}),
+      new BodyDecorator(),
+
       {
         name: `${this.table.name}Service`,
         path: '',
@@ -64,7 +82,7 @@ export class ${this.table.name}Controller {
     }
 
     @Get('${primaryKey.name}')
-    findOne(@Param('${primaryKey.name}', new ParseUUIDPipe({ version: '4' })) ${primaryKey.name}: ${primaryKeyType}) {
+    findOne(@Param('${primaryKey.name}', new ParseIntPipe()) ${primaryKey.name}: ${primaryKeyType}) {
         try {
             return this.${this.table.name}Service.findOne(${primaryKey.name});
         } catch(e) {
@@ -73,7 +91,7 @@ export class ${this.table.name}Controller {
     }
 
     @Put('${primaryKey.name}')
-    update(@Param('${primaryKey.name}', new ParseUUIDPipe({ version: '4' })) ${primaryKey.name}: ${primaryKeyType}, @Body() update${this.table.name}Dto: Update${this.table.name}Dto) {
+    update(@Param('${primaryKey.name}', new ParseIntPipe()) ${primaryKey.name}: ${primaryKeyType}, @Body() update${this.table.name}Dto: Update${this.table.name}Dto) {
         try {
             return this.${this.table.name}Service.update(${primaryKey.name}, update${this.table.name}Dto);
         } catch(e) {
@@ -82,7 +100,7 @@ export class ${this.table.name}Controller {
     }
 
     @Delete('${primaryKey.name}')
-    delete(@Param('${primaryKey.name}', new ParseUUIDPipe({ version: '4' })) ${primaryKey.name}: ${primaryKeyType}) {
+    delete(@Param('${primaryKey.name}', new ParseIntPipe()) ${primaryKey.name}: ${primaryKeyType}) {
         try {
             return this.${this.table.name}Service.delete(${primaryKey.name});
         } catch(e) {

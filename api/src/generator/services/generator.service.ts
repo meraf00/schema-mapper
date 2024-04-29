@@ -16,7 +16,7 @@ export class GeneratorService {
     return this.queue.client.status;
   }
 
-  async getJob() {
+  async getJobs() {
     return await this.queue.getJobs([
       'waiting',
       'active',
@@ -24,6 +24,10 @@ export class GeneratorService {
       'failed',
       'delayed',
     ]);
+  }
+
+  async getJob(jobId: string) {
+    return await this.queue.getJob(jobId);
   }
 
   async enqueueJob(schemaId: string) {
