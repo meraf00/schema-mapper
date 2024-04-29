@@ -17,7 +17,11 @@ export class ServiceCode implements ICodeFile {
     readonly table: Table,
     readonly module: string,
   ) {
+<<<<<<< HEAD
     this.location = `src/${this.module}/services/${this.table.name}.service`;
+=======
+    this.location = `src/${this.module}/${this.table.name}.service.ts`;
+>>>>>>> 19bc5b1 (feat: add full code generator)
     this.imports = [
       new InjectableDecorator(),
       new InjectRepositoryDecorator(table.name),
