@@ -12,7 +12,7 @@ export class EntityCode implements ICodeFile {
     private readonly table: Table,
     private readonly module: string,
   ) {
-    this.location = `src/${this.module}/entities/${table.name}.ts`;
+    this.location = `src/${this.module}/entities/${table.name}`;
     this.imports = [new EntityDecorator()];
     this.exports = [table.name];
   }

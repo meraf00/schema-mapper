@@ -11,7 +11,7 @@ export class DtoCode implements ICodeFile {
     private readonly table: Table,
     private readonly module: string,
   ) {
-    this.location = `src/${this.module}/dto/${this.table.name}.dto.ts`;
+    this.location = `src/${this.module}/dto/${this.table.name}.dto`;
     this.imports = [];
     this.exports = [
       `Create${this.table.name}Dto`,

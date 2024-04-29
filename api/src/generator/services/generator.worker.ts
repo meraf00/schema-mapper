@@ -157,10 +157,22 @@ export class AppModule {}`,
     fs.cpSync(baseFolder, schemaFolder, { recursive: true });
 
     for (let [location, content] of files) {
-      const filePath = path.join(schemaFolder, location);
-      fs.mkdirSync(path.dirname(filePath));
-      fs.writeFileSync(filePath, content);
+      const filePath = path.join(schemaFolder, location + '.ts');
+
+      fs.mkdirSync(path.dirname(filePath), { recursive: true });
+
+      fs.writeFileSync(filePath, content, { encoding: 'utf-8' });
     }
+
+    const util = require('util');
+    const exec = util.promisify(require('child_process').exec);
+
+    async function ls() {
+      const { stdout, stderr } = await exec('npx prettier --write .');
+      console.log('stdout:', stdout);
+      console.log('stderr:', stderr);
+    }
+    await ls();
   }
 
   @Process()
@@ -174,10 +186,25 @@ export class AppModule {}`,
     const moduleFiles = this.generateModules(schema, resourceMap);
     const scaffoldFiles = this.generateScaffold(schema);
 
-    await this.writeFiles(schema, entitieFiles);
-    await this.writeFiles(schema, dtoFiles);
-    await this.writeFiles(schema, moduleFiles);
-    await this.writeFiles(schema, scaffoldFiles);
+    const files = new Map<string, string>();
+
+    for (let [key, value] of entitieFiles) {
+      files.set(key, value);
+    }
+
+    for (let [key, value] of dtoFiles) {
+      files.set(key, value);
+    }
+
+    for (let [key, value] of moduleFiles) {
+      files.set(key, value);
+    }
+
+    for (let [key, value] of scaffoldFiles) {
+      files.set(key, value);
+    }
+
+    await this.writeFiles(schema, files);
 
     await job.progress(42);
 

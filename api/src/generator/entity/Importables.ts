@@ -14,6 +14,15 @@ const optionsToCode = (options: { [key: string]: any }): string => {
   return '';
 };
 
+export class TypeOrmModuleImport implements IImportable {
+  readonly name = 'TypeOrmModule';
+  readonly path = '@nestjs/typeorm';
+
+  getCode(): string {
+    return `import { ${this.name} } from '${this.path}';`;
+  }
+}
+
 export class EntityDecorator implements IImportable {
   readonly name = 'Entity';
   readonly path = 'typeorm';

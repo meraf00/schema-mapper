@@ -13,7 +13,7 @@ export class ControllerCode implements ICodeFile {
     readonly table: Table,
     readonly module: string,
   ) {
-    this.location = `src/${this.module}/controllers/${this.table.name}.controller.ts`;
+    this.location = `src/${this.module}/${this.table.name}.controller`;
     this.imports = [
       new ControllerDecorator(this.table.name),
       new NotFoundExceptionImport(),

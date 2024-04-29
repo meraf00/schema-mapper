@@ -1,5 +1,6 @@
 import { Schema } from 'src/schema/entities';
 import { ICodeFile, IImportable } from './Code';
+import { ModuleDecorator, TypeOrmModuleImport } from './Importables';
 
 export class ModuleCode implements ICodeFile {
   location: string;
@@ -8,8 +9,8 @@ export class ModuleCode implements ICodeFile {
   exports: string[];
 
   constructor(readonly schema: Schema) {
-    this.location = `src/${schema.name}/${schema.name}.module.ts`;
-    this.imports = [];
+    this.location = `src/${schema.name}/${schema.name}.module`;
+    this.imports = [new ModuleDecorator(), new TypeOrmModuleImport()];
     this.name = `${schema.name}Module`;
     this.exports = [this.name];
   }
@@ -41,9 +42,9 @@ export class ModuleCode implements ICodeFile {
       });
 
     return `@Module({
-  imports: [TypeOrmModule.forFeature(${entities})],
-  controllers: ${controllers},
-  providers: ${services},
+  imports: [TypeOrmModule.forFeature([${entities.join(', ')}])],
+  controllers: [${controllers.join(', ')}],
+  providers: [${services.join(', ')}],
 })
 export class ${this.name} {}`;
   }
