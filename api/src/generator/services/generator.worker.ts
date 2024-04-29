@@ -6,6 +6,8 @@ import { ICodeFile } from '../entity/Code';
 import { Schema } from 'src/schema/entities';
 import { DtoFolder } from '../entity/DtoFolder';
 import { ModuleFolder } from '../entity/ModuleFolder';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Processor(CODE_GENERATION)
 export class GeneratorWorker {
@@ -107,6 +109,60 @@ export class GeneratorWorker {
     return fileMap;
   }
 
+  generateScaffold(schema: Schema) {
+    const fileMap = new Map<string, string>();
+
+    fileMap.set(
+      'src/app.module.ts',
+      `import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ${schema.name}Module } from './${schema.name}/${schema.name}.module';
+
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'root',
+      database: '${schema.name}',
+      entities: [__dirname + '/**/*.entity{.ts}'],
+      synchronize: true,
+      autoLoadEntities: true,
+    }),
+
+    ${schema.name}Module,
+  ],
+})
+export class AppModule {}`,
+    );
+
+    return fileMap;
+  }
+
+  async writeFiles(schema: Schema, files: Map<string, string>) {
+    const baseFolder = path.join(process.cwd(), 'storage/base');
+
+    const schemaFolder = path.join(process.cwd(), `/storage/${schema.id}`);
+
+    if (fs.existsSync(schemaFolder)) {
+      fs.rmSync(schemaFolder, {
+        force: true,
+        recursive: true,
+      });
+    }
+
+    fs.cpSync(baseFolder, schemaFolder, { recursive: true });
+
+    for (let [location, content] of files) {
+      const filePath = path.join(schemaFolder, location);
+      fs.mkdirSync(path.dirname(filePath));
+      fs.writeFileSync(filePath, content);
+    }
+  }
+
   @Process()
   async generateCode(job: Job) {
     const schema = job.data;
@@ -116,10 +172,12 @@ export class GeneratorWorker {
     const entitieFiles = this.generateEntities(schema, resourceMap);
     const dtoFiles = this.generateDtos(schema, resourceMap);
     const moduleFiles = this.generateModules(schema, resourceMap);
+    const scaffoldFiles = this.generateScaffold(schema);
 
-    console.log(entitieFiles);
-    console.log(dtoFiles);
-    console.log(moduleFiles);
+    await this.writeFiles(schema, entitieFiles);
+    await this.writeFiles(schema, dtoFiles);
+    await this.writeFiles(schema, moduleFiles);
+    await this.writeFiles(schema, scaffoldFiles);
 
     await job.progress(42);
 
@@ -128,6 +186,6 @@ export class GeneratorWorker {
 
   @OnQueueCompleted()
   onCompleted(job: Job) {
-    console.log(`Job completed with result ${job}`);
+    console.log(`Job completed with result`);
   }
 }
