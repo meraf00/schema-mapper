@@ -3,6 +3,9 @@ import { CODE_GENERATION } from '../injectionKeys';
 import { Job } from 'bull';
 import { EntityFolder } from '../entity/EntityFolder';
 import { ICodeFile } from '../entity/Code';
+import { Schema } from 'src/schema/entities';
+import { DtoFolder } from '../entity/DtoFolder';
+import { ModuleFolder } from '../entity/ModuleFolder';
 
 @Processor(CODE_GENERATION)
 export class GeneratorWorker {
@@ -20,12 +23,7 @@ export class GeneratorWorker {
     });
   }
 
-  @Process()
-  async generateCode(job: Job) {
-    const schema = job.data;
-
-    const resourceMap = new Map<string, string>();
-
+  generateEntities(schema: Schema, resourceMap: Map<string, string>) {
     const code = new EntityFolder(schema);
     const files = code.getFiles();
 
@@ -39,19 +37,89 @@ export class GeneratorWorker {
       }
     }
 
-    const filesWithImports = files.map((file, i) => {
-      return (
-        this.resolveDependency(file, resourceMap).join('\n') +
-        '\n\n' +
-        fileContents[i]
-      );
-    });
+    const fileMap = new Map<string, string>();
 
-    for (let i in filesWithImports) {
-      console.log(files[i].location);
-      console.log(filesWithImports[i]);
-      console.log();
+    for (let i in files) {
+      fileMap.set(
+        files[i].location,
+        this.resolveDependency(files[i], resourceMap).join('\n') +
+          '\n\n' +
+          fileContents[i],
+      );
     }
+
+    return fileMap;
+  }
+
+  generateDtos(schema: Schema, resourceMap: Map<string, string>) {
+    const code = new DtoFolder(schema);
+    const files = code.getFiles();
+
+    const fileContents: string[] = [];
+
+    for (let file of files) {
+      fileContents.push(file.getCode());
+
+      for (let exp of file.exports) {
+        resourceMap.set(exp, file.location);
+      }
+    }
+
+    const fileMap = new Map<string, string>();
+
+    for (let i in files) {
+      fileMap.set(
+        files[i].location,
+        this.resolveDependency(files[i], resourceMap).join('\n') +
+          '\n\n' +
+          fileContents[i],
+      );
+    }
+
+    return fileMap;
+  }
+
+  generateModules(schema: Schema, resourceMap: Map<string, string>) {
+    const code = new ModuleFolder(schema);
+    const files = code.getFiles();
+
+    const fileContents: string[] = [];
+
+    for (let file of files) {
+      fileContents.push(file.getCode());
+
+      for (let exp of file.exports) {
+        resourceMap.set(exp, file.location);
+      }
+    }
+
+    const fileMap = new Map<string, string>();
+
+    for (let i in files) {
+      fileMap.set(
+        files[i].location,
+        this.resolveDependency(files[i], resourceMap).join('\n') +
+          '\n\n' +
+          fileContents[i],
+      );
+    }
+
+    return fileMap;
+  }
+
+  @Process()
+  async generateCode(job: Job) {
+    const schema = job.data;
+
+    const resourceMap = new Map<string, string>();
+
+    const entitieFiles = this.generateEntities(schema, resourceMap);
+    const dtoFiles = this.generateDtos(schema, resourceMap);
+    const moduleFiles = this.generateModules(schema, resourceMap);
+
+    console.log(entitieFiles);
+    console.log(dtoFiles);
+    console.log(moduleFiles);
 
     await job.progress(42);
 
@@ -60,7 +128,6 @@ export class GeneratorWorker {
 
   @OnQueueCompleted()
   onCompleted(job: Job) {
-    //console.log(job);
     console.log(`Job completed with result ${job}`);
   }
 }

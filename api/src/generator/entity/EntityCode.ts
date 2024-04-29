@@ -8,8 +8,11 @@ export class EntityCode implements ICodeFile {
   exports: string[];
   location: string;
 
-  constructor(private readonly table: Table) {
-    this.location = `src/entities/${table.name}.ts`;
+  constructor(
+    private readonly table: Table,
+    private readonly module: string,
+  ) {
+    this.location = `src/${this.module}/entities/${table.name}.ts`;
     this.imports = [new EntityDecorator()];
     this.exports = [table.name];
   }
