@@ -30,4 +30,7 @@ export class Table {
   @ManyToOne(() => Schema, (schema) => schema.tables, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'schemaId' })
   schema: Schema;
+
+  @Column({ default: false })
+  isAggregate: boolean;
 }

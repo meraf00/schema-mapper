@@ -1,18 +1,34 @@
 'use client';
 
-import { cacheKeys, getSchema, updateSchema, getSchemaCode } from '@/api';
-import { useAppSelector } from '@/lib/hooks';
-import { CodeHighlightTabs } from '@mantine/code-highlight';
-import { Button, TextInput } from '@mantine/core';
+import {
+  cacheKeys,
+  getSchema,
+  updateSchema,
+  getSchemaCode,
+  generateCode,
+} from '@/api';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
+import { SchemaTable } from '../SchemaTable';
+import { load, set } from '@/lib/store/codegeneration/slice';
+import { Button, TextInput } from '@mantine/core';
+import { TaskList } from '../TaskList';
 
 export const UpdateSchemaForm = () => {
   const queryClient = useQueryClient();
 
   const { schema } = useAppSelector((state) => state.entity);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (schema) {
+      dispatch(load());
+    }
+  }, []);
 
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: [cacheKeys.schemas, schema!],
@@ -48,6 +64,24 @@ export const UpdateSchemaForm = () => {
     },
   });
 
+  const codeGeneration = useMutation({
+    mutationFn: (schemaId: string) => generateCode(schemaId),
+    onSuccess: (data) => {
+      dispatch(
+        set({
+          id: data.id,
+          timestamp: new Date().getTime(),
+          status: 'Pending',
+        })
+      );
+      notifications.show({
+        title: 'Success',
+        message: 'Code generation task added.',
+        color: 'blue',
+      });
+    },
+  });
+
   useEffect(() => {
     if (data) {
       setName(data.name);
@@ -57,6 +91,7 @@ export const UpdateSchemaForm = () => {
   return (
     <>
       <form
+        className="w-1/3"
         onSubmit={form.onSubmit((data) =>
           mutation.mutate({ id: schema!, name: name })
         )}
@@ -76,13 +111,20 @@ export const UpdateSchemaForm = () => {
         </Button>
       </form>
 
-      <div className="mt-5 flex w-full">
+      {data && (
+        <div className="flex flex-col gap-5">
+          <SchemaTable schema={data} />
+          <TaskList schemaId={data.id} />
+        </div>
+      )}
+
+      {/* <div className="mt-5 flex w-full">
         <CodeHighlightTabs
           code={[
             { fileName: name, code: schemaCode.data ?? '', language: 'ts' },
           ]}
         />
-      </div>
+      </div> */}
     </>
   );
 };

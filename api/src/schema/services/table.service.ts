@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Schema } from '../entities/schema.entity';
 import { Table } from '../entities/table.entity';
 import { Repository } from 'typeorm';
 import { CreateTableDto, UpdateTableDto } from '../dto/request.dto';
@@ -22,10 +21,6 @@ export class TableService {
   }
 
   async create(createTableDto: CreateTableDto): Promise<Table> {
-    // const table = this.tableRepository.create();
-    // table.name = createTableDto.name;
-    // table.schema = { id: createTableDto.schemaId } as Schema;
-
     const table = this.tableRepository.create(createTableDto);
     return this.tableRepository.save(table);
   }

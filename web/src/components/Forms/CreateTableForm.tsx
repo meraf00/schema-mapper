@@ -1,5 +1,5 @@
 import { cacheKeys, createSchema, createTable } from '@/api';
-import { Button, TextInput } from '@mantine/core';
+import { Button, Checkbox, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,16 +15,19 @@ export const CreateTableForm = ({ schemaId, close }: CreateTableFormProps) => {
 
   const form = useForm({
     mode: 'uncontrolled',
-    initialValues: { name: '' },
+    initialValues: { name: '', aggregate: false },
 
     validate: {
       name: (value) =>
         value.length < 1 ? 'Table name must have at least 1 letter' : null,
+      aggregate: (value) => {
+        return null;
+      },
     },
   });
 
   const mutation = useMutation({
-    mutationFn: (name: string) => createTable(schemaId, name),
+    mutationFn: (data: any) => createTable(schemaId, data.name, data.aggregate),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
       notifications.show({
@@ -37,13 +40,20 @@ export const CreateTableForm = ({ schemaId, close }: CreateTableFormProps) => {
   });
 
   return (
-    <form onSubmit={form.onSubmit((data) => mutation.mutate(data.name))}>
+    <form onSubmit={form.onSubmit((data) => mutation.mutate(data))}>
       <TextInput
         label="Name"
         placeholder="Name"
         {...form.getInputProps('name')}
         key={'name'}
         required
+      />
+
+      <Checkbox
+        label="Aggregate"
+        placeholder="Aggregate"
+        {...form.getInputProps('aggregate')}
+        key="aggregate"
       />
 
       <Button type="submit" mt="sm">

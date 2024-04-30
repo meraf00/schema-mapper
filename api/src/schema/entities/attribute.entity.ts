@@ -66,6 +66,9 @@ export class Attribute {
   @JoinColumn()
   references: Attribute;
 
+  @Column({ nullable: true })
+  backref: string;
+
   @Column({
     type: 'enum',
     enum: RelationType,

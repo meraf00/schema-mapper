@@ -18,5 +18,6 @@ import { CodeGenerationService } from './services/codegeneration.service';
     CodeGenerationService,
   ],
   controllers: [SchemaController, AttributeController, TableController],
+  exports: [SchemaService, AttributeService, TableService],
 })
 export class SchemaModule {}

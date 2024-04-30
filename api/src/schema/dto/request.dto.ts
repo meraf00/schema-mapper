@@ -28,12 +28,20 @@ export class CreateTableDto {
   @ApiProperty()
   @IsUUID()
   schemaId: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  isAggregate: boolean;
 }
 
 export class UpdateTableDto {
   @ApiProperty()
   @IsString()
   name: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  isAggregate: boolean;
 }
 
 export class CreateAttributeDto {
@@ -78,6 +86,11 @@ export class CreateAttributeDto {
   @ValidateIf((o) => o.isForeign === true)
   @IsEnum(['ONE_TO_ONE', 'MANY_TO_ONE'])
   relationType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  backref: string;
 }
 
 export class UpdateAttributeDto {
@@ -125,4 +138,9 @@ export class UpdateAttributeDto {
   @ValidateIf((o) => o.isForeign === true)
   @IsEnum(['ONE_TO_ONE', 'MANY_TO_ONE'])
   relationType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  backref: string;
 }

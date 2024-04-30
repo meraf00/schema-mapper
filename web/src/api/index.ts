@@ -27,12 +27,14 @@ export interface AttributeData {
   isGenerated: boolean;
   references?: string;
   relationType?: 'ONE_TO_ONE' | 'MANY_TO_ONE';
+  backref?: string;
 }
 
 export const cacheKeys = {
   schemas: 'schemas',
   tables: 'tables',
   attributes: 'attributes',
+  tasks: 'tasks',
 };
 
 export const getSchema = async (id: string) => {
@@ -65,13 +67,29 @@ export const getTable = async (id: string) => {
   return response.data;
 };
 
-export const createTable = async (schemaId: string, name: string) => {
-  const response = await instance.post(`tables`, { name, schemaId });
+export const createTable = async (
+  schemaId: string,
+  name: string,
+  aggregate: boolean
+) => {
+  const response = await instance.post(`tables`, {
+    name,
+    schemaId,
+    isAggregate: aggregate,
+  });
   return response.data;
 };
 
-export const updateTable = async (id: string, name: string) => {
-  const response = await instance.put(`tables/${id}`, { name });
+export const updateTable = async (
+  id: string,
+  name: string,
+  aggregate: boolean
+) => {
+  const response = await instance.put(`tables/${id}`, {
+    name,
+    isAggregate: aggregate,
+  });
+
   return response.data;
 };
 
@@ -109,5 +127,15 @@ export const deleteTable = async (id: string) => {
 
 export const deleteSchema = async (id: string) => {
   const response = await instance.delete(`schemas/${id}`);
+  return response.data;
+};
+
+export const generateCode = async (id: string) => {
+  const response = await instance.post(`generator/${id}`);
+  return response.data;
+};
+
+export const getTasks = async () => {
+  const response = await instance.get('generator');
   return response.data;
 };

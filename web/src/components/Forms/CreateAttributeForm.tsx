@@ -41,6 +41,7 @@ export const CreateAttributeForm = ({
       generated: (value) => {},
       unique: (value) => {},
       foreign: (value) => {},
+      backref: (value) => {},
       'referenced-table': (value) => {},
       'referenced-attribute': (value) => {},
       'relation-type': (value) => {},
@@ -89,6 +90,7 @@ export const CreateAttributeForm = ({
           isForeign: data.foreign ?? false,
           references: data['referenced-attribute'],
           relationType: data['relation-type'],
+          backref: data.backref,
           tableId,
         })
       )}
@@ -177,6 +179,13 @@ export const CreateAttributeForm = ({
             {...form.getInputProps('relation-type')}
             key="relation-type"
             required
+          />
+
+          <TextInput
+            label="Backref"
+            placeholder="Backref"
+            {...form.getInputProps('backref')}
+            key="backref"
           />
         </>
       )}

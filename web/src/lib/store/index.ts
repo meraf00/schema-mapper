@@ -2,9 +2,11 @@
 
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import entityReducer from './entity/slice';
+import generationReducer from './codegeneration/slice';
 
 const rootReducer = combineReducers({
   entity: entityReducer,
+  generation: generationReducer,
 });
 
 export const makeStore = () =>
