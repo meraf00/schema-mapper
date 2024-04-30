@@ -1,7 +1,8 @@
-import { Table } from 'src/schema/entities';
+import { Attribute, Table } from 'src/schema/entities';
 import { ICodeFile, IImportable } from './Code';
 import { AttributeCode } from './AttributeCode';
 import { EntityDecorator } from './Importables';
+import { BackRefAttribCode } from './BackRefAttribCode';
 
 export class EntityCode implements ICodeFile {
   imports: IImportable[];
@@ -11,8 +12,9 @@ export class EntityCode implements ICodeFile {
   constructor(
     private readonly table: Table,
     private readonly module: string,
+    private readonly schemaAttributes: Attribute[],
   ) {
-    this.location = `src/${this.module}/entities/${table.name}`;
+    this.location = `src/entities/${table.name}`;
     this.imports = [new EntityDecorator()];
     this.exports = [table.name];
   }
@@ -33,6 +35,24 @@ export class EntityCode implements ICodeFile {
         }
       });
     }
+
+    console.log(
+      this.table.name,
+      this.schemaAttributes.filter(
+        (attr) => attr.isForeign && attr.references.id === this.table.id,
+      ),
+    );
+
+    this.schemaAttributes
+      .filter(
+        (attr) => attr.isForeign && attr.references.tableId === this.table.id,
+      )
+      .forEach((attr) => {
+        console.log(attr);
+        const imp = new BackRefAttribCode(attr);
+        body.push(imp.getCode());
+        this.imports.push(...imp.imports);
+      });
 
     return `@Entity()\nexport class ${this.table.name} {\n${body.join(
       '\n\n',

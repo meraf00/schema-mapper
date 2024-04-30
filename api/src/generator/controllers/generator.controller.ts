@@ -17,7 +17,18 @@ export class GeneratorController {
   constructor(private readonly generatorService: GeneratorService) {}
 
   @Post(':id')
-  async findOne(
+  async generate(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) schemaId: string,
+  ) {
+    try {
+      return await this.generatorService.enqueueJob(schemaId);
+    } catch (e) {
+      throw new NotFoundException(e.message);
+    }
+  }
+
+  @Get(':id/generate')
+  async generate_(
     @Param('id', new ParseUUIDPipe({ version: '4' })) schemaId: string,
   ) {
     try {

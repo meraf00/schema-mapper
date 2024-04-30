@@ -7,7 +7,12 @@ export class EntityFolder implements ICodeFolder {
 
   getFiles(): ICodeFile[] {
     return this.schema.tables.map(
-      (table) => new EntityCode(table, this.schema.name),
+      (table) =>
+        new EntityCode(
+          table,
+          this.schema.name,
+          this.schema.tables.flatMap((table) => table.attributes),
+        ),
     );
   }
 }

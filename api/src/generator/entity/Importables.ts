@@ -73,6 +73,7 @@ export class OneToManyDecorator implements IImportable {
   constructor(
     readonly referencedTable: string,
     readonly attributeTable: string,
+    readonly attribute: string,
     readonly backref: string | null,
     readonly options: { [key: string]: any },
   ) {}
@@ -82,7 +83,7 @@ export class OneToManyDecorator implements IImportable {
 
     if (this.backref) {
       attrs.push(
-        `(${this.referencedTable.toLocaleLowerCase()}) => ${this.referencedTable.toLocaleLowerCase()}.${this.backref}`,
+        `(${this.referencedTable.toLocaleLowerCase()}) => ${this.referencedTable.toLocaleLowerCase()}.${this.attribute}`,
       );
     }
 
