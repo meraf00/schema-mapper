@@ -2,19 +2,29 @@
 
 import { cacheKeys, getTasks } from '@/api';
 import { Table } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export interface TaskListProps {
   schemaId: string;
 }
 
 export const TaskList = ({ schemaId }: TaskListProps) => {
+  const queryClient = useQueryClient();
   const { isPending, error, data, isFetching } = useQuery({
-    queryKey: [cacheKeys.tasks],
+    queryKey: [cacheKeys.tasks, schemaId],
     queryFn: () => getTasks(),
   });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      queryClient.invalidateQueries({ queryKey: [cacheKeys.tasks, schemaId] });
+      console.log('test');
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   if (data) {
     return (

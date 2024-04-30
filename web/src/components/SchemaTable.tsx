@@ -4,7 +4,7 @@ import { Table as T } from '@/lib/model/table';
 import { Button, Table } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface SchemaTableProps {
   schema: Schema;
