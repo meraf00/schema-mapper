@@ -85,6 +85,10 @@ export class BackRefAttribCode implements ICodeFile {
 
     const code = decorators.map((decorator) => decorator.getCode());
 
-    return `${code.join('\n')}\n${this.attribute.backref}: ${this.type()};`;
+    if (this.attribute.relationType === RelationType.ONE_TO_ONE) {
+      return `${code.join('\n')}\n${this.attribute.backref}: ${this.attribute.table.name};`;
+    } else {
+      return `${code.join('\n')}\n${this.attribute.backref}: ${this.attribute.table.name}[];`;
+    }
   }
 }
