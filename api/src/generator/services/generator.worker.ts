@@ -147,7 +147,6 @@ export class AppModule {}`,
   async generateZipFile(
     zipFilepath: string,
     folderPath: string,
-    outputFolderPath: string,
     onComplete: (filePath: string) => void,
     onError: (err: Error) => void,
   ) {
@@ -165,8 +164,8 @@ export class AppModule {}`,
     });
 
     ar.pipe(output);
-    console.log(path.normalize(folderPath + '/'));
-    ar.directory(path.normalize(folderPath + '/'), outputFolderPath).finalize();
+
+    ar.directory(path.normalize(folderPath), false).finalize();
   }
 
   async writeFiles(
@@ -210,16 +209,9 @@ export class AppModule {}`,
     }
 
     const zipFilepath = path.join(process.cwd(), `storage/${schema.id}.zip`);
-    const outputFolderPath = path.join(process.cwd(), `storage`);
     const folderPath = path.join(process.cwd(), `storage/${schema.id}`);
 
-    this.generateZipFile(
-      zipFilepath,
-      folderPath,
-      outputFolderPath,
-      onComplete,
-      onError,
-    );
+    this.generateZipFile(zipFilepath, folderPath, onComplete, onError);
   }
 
   @Process()

@@ -66,7 +66,7 @@ export class ControllerCode implements ICodeFile {
 
     primaryKeyType = primaryKeyType || 'string';
 
-    return `@Controller('${this.table.name}')
+    return `@Controller('${this.table.name.toLocaleLowerCase()}')
 export class ${this.table.name}Controller {
 
     constructor(private readonly ${this.table.name}Service: ${this.table.name}Service) {}

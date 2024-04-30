@@ -20,7 +20,6 @@ export const TaskList = ({ schemaId }: TaskListProps) => {
   useEffect(() => {
     const interval = setInterval(() => {
       queryClient.invalidateQueries({ queryKey: [cacheKeys.tasks, schemaId] });
-      console.log('test');
     }, 5000);
 
     return () => clearInterval(interval);
@@ -40,7 +39,7 @@ export const TaskList = ({ schemaId }: TaskListProps) => {
             {data
               .filter((job: any) => job.data.id === schemaId)
               .sort((a: any, b: any) => b.timestamp - a.timestamp)
-              .slice(0, 5)
+              .slice(0, 1)
               .map((task: any) => (
                 <Table.Tr key={task.id}>
                   <Table.Td>{task.timestamp}</Table.Td>

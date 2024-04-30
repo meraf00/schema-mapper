@@ -88,7 +88,6 @@ export class AttributeCode implements ICodeFile {
           this.attribute.backref,
           {
             nullable: this.attribute.isNullable,
-            unique: this.attribute.isUnique,
           },
         ),
       ];
@@ -102,7 +101,6 @@ export class AttributeCode implements ICodeFile {
           this.attribute.table.name,
           this.attribute.backref,
           {
-            unique: this.attribute.isUnique,
             nullable: this.attribute.isNullable,
           },
         ),

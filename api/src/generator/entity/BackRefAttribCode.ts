@@ -1,14 +1,6 @@
 import { Attribute, AttributeType } from 'src/schema/entities';
 import { ICodeFile, IImportable } from './Code';
-import {
-  ColumnDecorator,
-  GeneratedDecorator,
-  ManyToOneDecorator,
-  OneToManyDecorator,
-  OneToOneDecorator,
-  PrimaryColumnDecorator,
-  PrimaryGeneratedColumnDecorator,
-} from './Importables';
+import { OneToManyDecorator, OneToOneDecorator } from './Importables';
 import { RelationType } from 'src/schema/entities/attribute.entity';
 
 export class BackRefAttribCode implements ICodeFile {
