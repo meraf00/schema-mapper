@@ -129,7 +129,7 @@ export default function Home() {
           )}
         </div>
 
-        <div className="w-1/3 pb-10">{form}</div>
+        <div className="pb-10">{form}</div>
       </div>
     </main>
   );

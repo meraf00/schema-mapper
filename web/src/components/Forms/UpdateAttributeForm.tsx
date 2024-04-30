@@ -41,8 +41,7 @@ export const UpdateAttributeForm = ({
     generated: data?.isGenerated ?? false,
     unique: data?.isUnique ?? false,
     foreign: data?.isForeign ?? false,
-    'referenced-table': tableQuery.data?.id ?? '',
-
+    'referenced-table': data?.references?.tableId ?? '',
     'referenced-attribute': data?.references?.id ?? '',
     'relation-type': data?.relationType ?? '',
   });
@@ -50,17 +49,17 @@ export const UpdateAttributeForm = ({
   useEffect(() => {
     if (data) {
       setValues({
-        name: data.name,
-        type: data.type,
-        primary: data.isPrimary,
-        nullable: data.isNullable,
-        generated: data.isGenerated,
-        unique: data.isUnique,
-        foreign: data.isForeign,
-        backref: data.backref,
-        'referenced-table': tableQuery.data?.id,
-        'referenced-attribute': data.references?.id,
-        'relation-type': data.relationType,
+        name: data.name ?? '',
+        type: data.type ?? '',
+        primary: data.isPrimary ?? false,
+        nullable: data.isNullable ?? false,
+        generated: data.isGenerated ?? false,
+        unique: data.isUnique ?? false,
+        foreign: data.isForeign ?? false,
+        backref: data.backref ?? '',
+        'referenced-table': data?.references?.tableId ?? '',
+        'referenced-attribute': data.references?.id ?? '',
+        'relation-type': data.relationType ?? '',
       });
     }
   }, [data, tableQuery.data]);
@@ -96,7 +95,10 @@ export const UpdateAttributeForm = ({
   const mutation = useMutation({
     mutationFn: (attribute: any) => updateAttribute(attributeId, attribute),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [cacheKeys.attributes] });
+      queryClient.invalidateQueries({ queryKey: [cacheKeys.tables] });
       queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
+
       notifications.show({
         title: 'Success',
         message: 'Attribute updated successfully',
@@ -111,7 +113,7 @@ export const UpdateAttributeForm = ({
 
   return (
     <form
-      className="flex flex-col gap-2"
+      className="flex flex-col gap-2 w-1/3"
       onSubmit={form.onSubmit((data) =>
         mutation.mutate({
           name: values.name,
@@ -179,12 +181,10 @@ export const UpdateAttributeForm = ({
             placeholder="Referenced table"
             {...form.getInputProps('referenced-table')}
             onChange={(event) => {
-              {
-                setValues((values: any) => ({
-                  ...values,
-                  'referenced-table': event,
-                }));
-              }
+              setValues((values: any) => ({
+                ...values,
+                'referenced-table': event,
+              }));
             }}
             key="referenced-table"
             value={values['referenced-table']}

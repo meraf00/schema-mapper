@@ -34,6 +34,7 @@ export const cacheKeys = {
   schemas: 'schemas',
   tables: 'tables',
   attributes: 'attributes',
+  tasks: 'tasks',
 };
 
 export const getSchema = async (id: string) => {
@@ -84,7 +85,6 @@ export const updateTable = async (
   name: string,
   aggregate: boolean
 ) => {
-  console.log('akdsjfhakjsdhfjkahsdfjk');
   const response = await instance.put(`tables/${id}`, {
     name,
     isAggregate: aggregate,
@@ -127,5 +127,15 @@ export const deleteTable = async (id: string) => {
 
 export const deleteSchema = async (id: string) => {
   const response = await instance.delete(`schemas/${id}`);
+  return response.data;
+};
+
+export const generateCode = async (id: string) => {
+  const response = await instance.post(`generator/${id}`);
+  return response.data;
+};
+
+export const getTasks = async () => {
+  const response = await instance.get('generator');
   return response.data;
 };

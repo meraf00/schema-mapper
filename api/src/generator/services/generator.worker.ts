@@ -165,6 +165,7 @@ export class AppModule {}`,
     });
 
     ar.pipe(output);
+    console.log(path.normalize(folderPath + '/'));
     ar.directory(path.normalize(folderPath + '/'), outputFolderPath).finalize();
   }
 
