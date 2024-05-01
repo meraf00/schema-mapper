@@ -1,14 +1,19 @@
 import { Table } from 'src/schema/entities';
 import { AttributeCode } from './attribute';
-import { IImportable } from '../entity/Code';
 import { entityTemplate } from './entity.template';
+import { Importable } from './dependency';
 
-export class Entity {
-  dependency: IImportable[];
-
+export class Entity implements Importable {
+  name: string;
+  dependency: Importable[];
   attributes: AttributeCode[];
 
-  constructor(readonly table: Table) {
+  constructor(
+    readonly module: string,
+    readonly table: Table,
+  ) {
+    this.name = table.name;
+
     this.attributes = this.table.attributes.map(
       (attribute) => new AttributeCode(attribute),
     );

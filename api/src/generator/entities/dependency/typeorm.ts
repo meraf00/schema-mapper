@@ -2,10 +2,12 @@ import { Case } from 'change-case-all';
 import { decoratorTemplate } from './common.templates';
 import { backRefTemplate, refTableTemplate } from './typeorm.template';
 import { stringify } from '../util';
+import { Importable } from './types';
 
-export class TypeOrmOneToOne {
+export class TypeOrmOneToOne implements Importable {
   readonly name = 'OneToOne';
   readonly module = 'typeorm';
+  readonly dependency = [];
 
   constructor(
     readonly referencedTableName: string,
@@ -40,9 +42,10 @@ export class TypeOrmOneToOne {
   }
 }
 
-export class TypeOrmManyToOne {
+export class TypeOrmManyToOne implements Importable {
   readonly name = 'ManyToOne';
   readonly module = 'typeorm';
+  readonly dependency = [];
 
   constructor(
     readonly referencedTableName: string,
@@ -77,9 +80,10 @@ export class TypeOrmManyToOne {
   }
 }
 
-export class TypeOrmOneToMany {
+export class TypeOrmOneToMany implements Importable {
   readonly name = 'OneToMany';
   readonly module = 'typeorm';
+  readonly dependency = [];
 
   constructor(
     readonly referencedTableName: string,
@@ -114,11 +118,12 @@ export class TypeOrmOneToMany {
   }
 }
 
-export class TypeOrmColumn {
+export class TypeOrmColumn implements Importable {
   public name = 'Column';
   readonly module = 'typeorm';
+  readonly dependency = [];
 
-  constructor(readonly options: { [key: string]: any }) {}
+  constructor(readonly options?: { [key: string]: any }) {}
 
   code(): string {
     return decoratorTemplate({
@@ -128,41 +133,52 @@ export class TypeOrmColumn {
   }
 }
 
-export class TypeOrmPrimaryColumn extends TypeOrmColumn {
+export class TypeOrmPrimaryColumn extends TypeOrmColumn implements Importable {
   override name = 'PrimaryColumn';
+  readonly dependency = [];
 
-  constructor(readonly options: { [key: string]: any }) {
+  constructor(readonly options?: { [key: string]: any }) {
     super(options);
   }
 }
 
-export class TypeOrmPrimaryGeneratedColumn extends TypeOrmColumn {
+export class TypeOrmPrimaryGeneratedColumn
+  extends TypeOrmColumn
+  implements Importable
+{
   override name = 'PrimaryGeneratedColumn';
+  readonly dependency = [];
 
-  constructor(readonly options: { [key: string]: any }) {
+  constructor(readonly options?: { [key: string]: any }) {
     super(options);
   }
 }
 
-export class TypeOrmGeneratedColumn extends TypeOrmColumn {
+export class TypeOrmGeneratedColumn
+  extends TypeOrmColumn
+  implements Importable
+{
   override name = 'Generated';
+  readonly dependency = [];
 
-  constructor(readonly options: { [key: string]: any }) {
+  constructor(readonly options?: { [key: string]: any }) {
     super(options);
   }
 }
 
-export class TypeOrmJoinColumn extends TypeOrmColumn {
+export class TypeOrmJoinColumn extends TypeOrmColumn implements Importable {
   override name = 'JoinColumn';
+  readonly dependency = [];
 
-  constructor(readonly options: { [key: string]: any }) {
+  constructor(readonly options?: { [key: string]: any }) {
     super(options);
   }
 }
 
-export class TypeOrmRepository {
+export class TypeOrmRepository implements Importable {
   readonly name = 'Repository';
-  readonly path = 'typeorm';
+  readonly module = 'typeorm';
+  readonly dependency = [];
 
   constructor(readonly entity: string) {}
 
@@ -171,9 +187,10 @@ export class TypeOrmRepository {
   }
 }
 
-export class TypeOrmEntity {
+export class TypeOrmEntity implements Importable {
   readonly name = 'Entity';
-  readonly path = 'typeorm';
+  readonly module = 'typeorm';
+  readonly dependency = [];
 
   code(): string {
     return decoratorTemplate({ name: this.name, params: [] });
