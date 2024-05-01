@@ -113,3 +113,69 @@ export class TypeOrmOneToMany {
     });
   }
 }
+
+export class TypeOrmColumn {
+  public name = 'Column';
+  readonly module = 'typeorm';
+
+  constructor(readonly options: { [key: string]: any }) {}
+
+  code(): string {
+    return decoratorTemplate({
+      name: this.name,
+      params: this.options ? [stringify(this.options)] : [],
+    });
+  }
+}
+
+export class TypeOrmPrimaryColumn extends TypeOrmColumn {
+  override name = 'PrimaryColumn';
+
+  constructor(readonly options: { [key: string]: any }) {
+    super(options);
+  }
+}
+
+export class TypeOrmPrimaryGeneratedColumn extends TypeOrmColumn {
+  override name = 'PrimaryGeneratedColumn';
+
+  constructor(readonly options: { [key: string]: any }) {
+    super(options);
+  }
+}
+
+export class TypeOrmGeneratedColumn extends TypeOrmColumn {
+  override name = 'Generated';
+
+  constructor(readonly options: { [key: string]: any }) {
+    super(options);
+  }
+}
+
+export class TypeOrmJoinColumn extends TypeOrmColumn {
+  override name = 'JoinColumn';
+
+  constructor(readonly options: { [key: string]: any }) {
+    super(options);
+  }
+}
+
+export class TypeOrmRepository {
+  readonly name = 'Repository';
+  readonly path = 'typeorm';
+
+  constructor(readonly entity: string) {}
+
+  code(): string {
+    return `${this.name}<${this.entity}>`;
+  }
+}
+
+export class TypeOrmEntity {
+  readonly name = 'Entity';
+  readonly path = 'typeorm';
+
+  code(): string {
+    return decoratorTemplate({ name: this.name, params: [] });
+  }
+}
