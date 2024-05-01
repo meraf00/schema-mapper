@@ -36,6 +36,7 @@ export class EntityCode implements ICodeFile {
       });
     }
 
+
     this.schemaAttributes
       .filter(
         (attr) => attr.isForeign && attr.references.tableId === this.table.id,
