@@ -7,8 +7,8 @@ import {
   TypeOrmOneToOne,
   TypeOrmPrimaryColumn,
   TypeOrmPrimaryGeneratedColumn,
-} from './dependency';
-import { Importable } from './dependency';
+} from '../dependency';
+import { Importable } from '../dependency';
 import { attributeTemplate } from './attribute.template';
 import { Case } from 'change-case-all';
 

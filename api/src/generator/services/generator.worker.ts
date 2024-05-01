@@ -10,7 +10,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import * as archiver from 'archiver';
-import { Entity } from '../entities/entity';
 
 @Processor(CODE_GENERATION)
 export class GeneratorWorker {

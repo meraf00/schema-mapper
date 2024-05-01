@@ -1,7 +1,7 @@
 import { Table } from 'src/schema/entities';
 import { AttributeCode } from './attribute';
 import { entityTemplate } from './entity.template';
-import { Importable, TypeOrmEntity } from './dependency';
+import { Importable, TypeOrmEntity } from '../dependency';
 
 export class Entity implements Importable {
   name: string;
