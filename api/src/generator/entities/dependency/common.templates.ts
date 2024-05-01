@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars';
+
 interface DecoratorContext {
   name: string;
   params: string[];

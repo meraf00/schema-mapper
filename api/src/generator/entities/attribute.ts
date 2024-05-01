@@ -36,7 +36,7 @@ const mapType = (type: AttributeType) => {
 };
 
 export class AttributeCode {
-  dependency: Importable[];
+  dependency: Importable[] = [];
 
   constructor(readonly attribute: Attribute) {
     this.dependency.push(...this.decorators);
