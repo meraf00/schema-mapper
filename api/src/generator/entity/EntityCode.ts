@@ -36,19 +36,12 @@ export class EntityCode implements ICodeFile {
       });
     }
 
-    console.log(
-      this.table.name,
-      this.schemaAttributes.filter(
-        (attr) => attr.isForeign && attr.references.id === this.table.id,
-      ),
-    );
 
     this.schemaAttributes
       .filter(
         (attr) => attr.isForeign && attr.references.tableId === this.table.id,
       )
       .forEach((attr) => {
-        console.log(attr);
         const imp = new BackRefAttribCode(attr);
         body.push(imp.getCode());
         this.imports.push(...imp.imports);

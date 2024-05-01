@@ -49,6 +49,8 @@ export const UpdateTableForm = ({ tableId }: UpdateTableFormProps) => {
     }
   }, [data]);
 
+  // console.log(data, aggregate);
+
   return (
     <form
       className="w-1/3"

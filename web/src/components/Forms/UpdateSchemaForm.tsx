@@ -1,12 +1,7 @@
 'use client';
 
-import {
-  cacheKeys,
-  getSchema,
-  updateSchema,
-  getSchemaCode,
-  generateCode,
-} from '@/api';
+
+import { cacheKeys, getSchema, updateSchema, generateCode } from '@/api';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -33,11 +28,6 @@ export const UpdateSchemaForm = () => {
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: [cacheKeys.schemas, schema!],
     queryFn: () => getSchema(schema!),
-  });
-
-  const schemaCode = useQuery({
-    queryKey: [cacheKeys.schemas, schema!, 'code'],
-    queryFn: () => getSchemaCode(schema!),
   });
 
   const [name, setName] = React.useState('');
@@ -117,14 +107,6 @@ export const UpdateSchemaForm = () => {
           <TaskList schemaId={data.id} />
         </div>
       )}
-
-      {/* <div className="mt-5 flex w-full">
-        <CodeHighlightTabs
-          code={[
-            { fileName: name, code: schemaCode.data ?? '', language: 'ts' },
-          ]}
-        />
-      </div> */}
     </>
   );
 };
