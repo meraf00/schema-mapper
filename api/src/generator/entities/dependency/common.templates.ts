@@ -5,7 +5,7 @@ interface DecoratorContext {
   params: string[];
 }
 
-const decorator = '@{{name}}({{#each params}}{{this}},{{/each}})';
+const decorator = '@{{name}}({{#each params}}{{{this}}},{{/each}})';
 
 export const decoratorTemplate =
   Handlebars.compile<DecoratorContext>(decorator);

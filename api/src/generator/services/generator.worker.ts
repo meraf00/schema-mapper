@@ -10,9 +10,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as prettier from 'prettier';
 import * as archiver from 'archiver';
+import { CodeGeneratorService } from './generator.svc';
 
 @Processor(CODE_GENERATION)
 export class GeneratorWorker {
+  constructor(private readonly codeGeneratorService: CodeGeneratorService) {}
+
   resolveDependency(file: ICodeFile, resourceMap: Map<string, string>) {
     return file.imports.map((imp) => {
       if (imp.path) {
@@ -217,6 +220,10 @@ export class AppModule {}`,
   @Process()
   async generateCode(job: Job) {
     const schema = job.data;
+
+    this.codeGeneratorService
+      .createEntities(schema)
+      .map((e) => console.log(e.code()));
 
     const resourceMap = new Map<string, string>();
 

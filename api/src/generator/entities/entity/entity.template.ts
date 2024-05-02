@@ -6,9 +6,9 @@ interface EntityContext {
 }
 
 const entity = `@Entity()
-export class {{name}} {
+export class {{{name}}} {
     {{#each attributes}}
-    {{this}}    
+    {{{this}}}    
     {{/each}}    
 }`;
 

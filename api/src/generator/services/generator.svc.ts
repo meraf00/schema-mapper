@@ -8,6 +8,13 @@ export class CodeGeneratorService {
   constructor(private schemaService: SchemaService) {}
 
   createEntities(schema: Schema): Entity[] {
-    return schema.tables.map((table) => new Entity(schema.name, table));
+    return schema.tables.map(
+      (table) =>
+        new Entity(
+          schema.name,
+          table,
+          schema.tables.flatMap((t) => t.attributes),
+        ),
+    );
   }
 }

@@ -1,8 +1,9 @@
-import { Table } from 'src/schema/entities';
+import { Attribute, Table } from 'src/schema/entities';
 import { AttributeCode } from './attribute';
 import { entityTemplate } from './entity.template';
 import { Importable, TypeOrmEntity } from '../dependency';
 import { Case } from 'change-case-all';
+import { BackRef } from './backref';
 
 export class Entity implements Importable {
   name: string;
@@ -12,12 +13,24 @@ export class Entity implements Importable {
   constructor(
     public module: string,
     readonly table: Table,
+    readonly schemaAttributes: Attribute[],
   ) {
     this.name = Case.pascal(table.name);
 
     this.attributes = this.table.attributes.map(
       (attribute) => new AttributeCode(attribute),
     );
+
+    this.schemaAttributes
+      .filter(
+        (attribute) =>
+          attribute.isForeign && attribute.references.tableId === this.table.id,
+      )
+      .forEach((attribute) => {
+        const backref = new BackRef(attribute);
+        this.attributes.push(backref);
+        this.dependency.push(...backref.dependency);
+      });
 
     this.dependency.push(
       ...[

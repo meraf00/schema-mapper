@@ -12,7 +12,7 @@ interface DtoContext {
 
 const dto = `export class {{name}} {
     {{#each attributes}}
-    {{this}}    
+    {{{this}}}    
     {{/each}}    
 }`;
 
