@@ -1,4 +1,6 @@
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { decoratorTemplate } from './common.templates';
+import { forFeatureTemplate, forRootTemplate } from './nestjs.template';
 import { Importable } from './types';
 
 export class NestInjectable implements Importable {
@@ -146,5 +148,41 @@ export class NestInjectRepository implements Importable {
 
   code(): string {
     return decoratorTemplate({ name: this.name, params: [this.entity] });
+  }
+}
+
+export class NestModule implements Importable {
+  readonly name = 'Module';
+  readonly module = '@nestjs/common';
+  readonly dependency = [];
+
+  code(): string {
+    return decoratorTemplate({ name: this.name, params: [] });
+  }
+}
+
+export type TypeOrmModuleMode =
+  | {
+      type: 'forRoot';
+      options: TypeOrmModuleOptions;
+    }
+  | {
+      type: 'forFeature';
+      options: string[];
+    };
+
+export class NestTypeOrmModule implements Importable {
+  readonly name = 'TypeOrmModule';
+  readonly module = '@nestjs/typeorm';
+  readonly dependency = [];
+
+  constructor(readonly mode: TypeOrmModuleMode) {}
+
+  code(): string {
+    if (this.mode.type === 'forRoot') {
+      return forRootTemplate({ options: this.mode.options });
+    } else {
+      return forFeatureTemplate({ entities: this.mode.options });
+    }
   }
 }
