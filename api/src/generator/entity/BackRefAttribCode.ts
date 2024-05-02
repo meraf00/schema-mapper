@@ -1,7 +1,6 @@
-import { Attribute, AttributeType } from 'src/schema/entities';
+import { Attribute, AttributeType, RelationType } from 'src/schema/entities';
 import { ICodeFile, IImportable } from './Code';
 import { OneToManyDecorator, OneToOneDecorator } from './Importables';
-import { RelationType } from 'src/schema/entities/attribute.entity';
 
 export class BackRefAttribCode implements ICodeFile {
   location: string;

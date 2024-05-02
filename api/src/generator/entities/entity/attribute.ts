@@ -1,5 +1,4 @@
-import { Attribute, AttributeType } from 'src/schema/entities';
-import { RelationType } from 'src/schema/entities/attribute.entity';
+import { Attribute, RelationType, mapAttributeType } from 'src/schema/entities';
 import {
   TypeOrmColumn,
   TypeOrmGeneratedColumn,
@@ -11,29 +10,6 @@ import {
 import { Importable } from '../dependency';
 import { attributeTemplate } from './attribute.template';
 import { Case } from 'change-case-all';
-
-const mapType = (type: AttributeType) => {
-  switch (type) {
-    case AttributeType.CHAR:
-    case AttributeType.VARCHAR:
-    case AttributeType.TEXT:
-      return 'string';
-    case AttributeType.BOOLEAN:
-      return 'boolean';
-    case AttributeType.TINYINT:
-    case AttributeType.INTEGER:
-    case AttributeType.BIGINT:
-    case AttributeType.FLOAT:
-    case AttributeType.DOUBLE:
-      return 'number';
-    case AttributeType.DATE:
-    case AttributeType.TIME:
-    case AttributeType.TIMESTAMP:
-      return 'Date';
-    default:
-      throw new Error(`Unknown type: ${type}`);
-  }
-};
 
 export class AttributeCode {
   dependency: Importable[] = [];
@@ -106,7 +82,7 @@ export class AttributeCode {
     return attributeTemplate({
       decorators: this.decorators.map((decorator) => decorator.code()),
       name: Case.camel(this.attribute.name),
-      type: mapType(this.attribute.type),
+      type: mapAttributeType(this.attribute.type),
     });
   }
 }

@@ -1,4 +1,4 @@
-import { Attribute, AttributeType } from 'src/schema/entities';
+import { Attribute, AttributeType, RelationType } from 'src/schema/entities';
 import { ICodeFile, IImportable } from './Code';
 import {
   ColumnDecorator,
@@ -8,7 +8,6 @@ import {
   PrimaryColumnDecorator,
   PrimaryGeneratedColumnDecorator,
 } from './Importables';
-import { RelationType } from 'src/schema/entities/attribute.entity';
 
 export class AttributeCode implements ICodeFile {
   location: string;

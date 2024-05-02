@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Table } from '../entities/table.entity';
-import { Attribute, AttributeType } from '../entities/attribute.entity';
+import { Attribute } from '../entities/attribute.entity';
 import { Repository } from 'typeorm';
 import { UtilityService } from 'src/common/utility/utility.service';
 import { InvalidAttributeTypeException } from '../exceptions/exceptions';
 import { CreateAttributeDto, UpdateAttributeDto } from '../dto/request.dto';
+import { AttributeType } from '../entities';
 
 @Injectable()
 export class AttributeService {
