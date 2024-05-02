@@ -6,10 +6,7 @@ import {
   serviceNameTemplate,
   serviceTemplate,
 } from './service.template';
-import {
-  NestInjectRepository,
-  NestInjectable,
-} from '../dependency/nest.template';
+import { NestInjectRepository, NestInjectable } from '../dependency/nestjs';
 import { createDtoTemplate, updateDtoTemplate } from '../dto/dto.template';
 
 export class Service implements Importable {
