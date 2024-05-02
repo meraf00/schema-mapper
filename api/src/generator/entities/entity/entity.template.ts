@@ -1,6 +1,6 @@
 import Handlebars from 'handlebars';
 
-interface EntityProps {
+interface EntityContext {
   name: string;
   attributes: string[];
 }
@@ -12,4 +12,4 @@ export class {{name}} {
     {{/each}}    
 }`;
 
-export const entityTemplate = Handlebars.compile<EntityProps>(entity);
+export const entityTemplate = Handlebars.compile<EntityContext>(entity);

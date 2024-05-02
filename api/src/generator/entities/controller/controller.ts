@@ -12,6 +12,7 @@ import {
   NestController,
   NestDelete,
   NestGet,
+  NestNotFoundException,
   NestParam,
   NestParseIntPipe,
   NestParseUUIDPipe,
@@ -38,6 +39,7 @@ export class Controller implements Importable {
         new NestPut(),
         new NestBody(),
         new NestParam(),
+        new NestNotFoundException(),
 
         {
           name: createDtoTemplate({ name: Case.pascal(this.table.name) }),
