@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars';
+
 interface NameContext {
   name: string;
 }
@@ -28,7 +30,7 @@ const controller = `@Controller('{{route}}')
   
       constructor(private readonly {{service}}: {{serviceClass}}) {}
   
-      @Post('{{entity.primaryKey}}')
+      @Post(':{{entity.primaryKey}}')
       async create(@Body() dto: {{createDtoClass}}) {
           return await this.{{service}}.create(dto);
       }
@@ -38,28 +40,28 @@ const controller = `@Controller('{{route}}')
           return await this.{{service}}.findAll();
       }
   
-      @Get('{{primaryKey}}')
-      async findOne(@Param('{{primaryKey}}', {{primaryKeyPipe}}) {{primaryKey}}: {{primaryKeyType}}) {
+      @Get(':{{entity.primaryKey}}')
+      async findOne(@Param('{{{entity.primaryKey}}}', {{entity.primaryKeyPipe}}) {{{entity.primaryKey}}}: {{entity.primaryKeyType}}) {
           try {
-              return await this.{{service}}.findOne({{primaryKey}});
+              return await this.{{service}}.findOne({{{entity.primaryKey}}});
           } catch(e) {
               throw new NotFoundException(e.message);
           }
       }
   
-      @Put('{{primaryKey}}')
-      async update(@Param('{{primaryKey}}', {{primaryKeyPipe}}) {{primaryKey}}: {{primaryKeyType}}, @Body() dto: {{updateDtoClass}}) {
+      @Put(':{{{entity.primaryKey}}}')
+      async update(@Param('{{{entity.primaryKey}}}', {{entity.primaryKeyPipe}}) {{{entity.primaryKey}}}: {{entity.primaryKeyType}}, @Body() dto: {{updateDtoClass}}) {
           try {
-              return await this.{{service}}.update({{primaryKey}}, dto);
+              return await this.{{service}}.update({{{entity.primaryKey}}}, dto);
           } catch(e) {
               throw new NotFoundException(e.message);
           }
       }
   
-      @Delete('{{primaryKey}}')
-      async delete(@Param('{{primaryKey}}', {{primaryKeyPipe}}) {{primaryKey}}: {{primaryKeyType}}) {
+      @Delete(':{{{entity.primaryKey}}}')
+      async delete(@Param('{{{entity.primaryKey}}}', {{entity.primaryKeyPipe}}) {{{entity.primaryKey}}}: {{entity.primaryKeyType}}) {
           try {
-              return await this.{{service}}.delete({{primaryKey}});
+              return await this.{{service}}.delete({{{entity.primaryKey}}});
           } catch(e) {
               throw new NotFoundException(e.message);
           }

@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars';
+
 interface NameContext {
   name: string;
 }

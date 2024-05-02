@@ -224,6 +224,12 @@ export class AppModule {}`,
     this.codeGeneratorService
       .createEntities(schema)
       .map((e) => console.log(e.code()));
+    this.codeGeneratorService
+      .createServices(schema)
+      .map((e) => console.log(e.code()));
+    this.codeGeneratorService
+      .createControllers(schema)
+      .map((e) => console.log(e.code()));
 
     const resourceMap = new Map<string, string>();
 
