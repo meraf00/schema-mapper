@@ -10,7 +10,7 @@ export class Entity implements Importable {
   attributes: AttributeCode[] = [];
 
   constructor(
-    readonly module: string,
+    public module: string,
     readonly table: Table,
   ) {
     this.name = Case.pascal(table.name);
@@ -23,7 +23,16 @@ export class Entity implements Importable {
       ...[
         new TypeOrmEntity(),
 
-        ...this.attributes.flatMap((attribute) => attribute.dependency),
+        ...this.attributes.flatMap((attribute) =>
+          attribute.dependency.map((dep) => {
+            // Entity should only reference other entity with in the same module
+            // So we can resolve modules of referenced tables as such
+            if (dep.module === null) {
+              dep.module = this.module;
+            }
+            return dep;
+          }),
+        ),
       ],
     );
   }
