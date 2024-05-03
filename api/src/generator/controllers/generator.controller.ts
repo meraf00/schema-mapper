@@ -11,6 +11,7 @@ import {
 import { GeneratorService } from '../services/generator.service';
 import { createReadStream } from 'fs';
 import { join } from 'path';
+import { CodeGeneratorService } from '../services/generator.svc';
 
 @Controller('generator')
 export class GeneratorController {

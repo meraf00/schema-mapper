@@ -3,11 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { SchemaService } from 'src/schema/services';
 import { CODE_GENERATION } from '../injectionKeys';
 import { Queue } from 'bull';
+import { CodeGeneratorService } from './generator.svc';
 
 @Injectable()
 export class GeneratorService {
   constructor(
     private schemaService: SchemaService,
+    private gser: CodeGeneratorService,
 
     @InjectQueue(CODE_GENERATION) private queue: Queue,
   ) {}
@@ -32,6 +34,11 @@ export class GeneratorService {
 
   async enqueueJob(schemaId: string) {
     const schema = await this.schemaService.findOne(schemaId);
+    try {
+      await this.gser.generate([schema]);
+    } catch (e) {
+      console.log(e);
+    }
 
     if (!schema) {
       throw new Error('Schema not found');

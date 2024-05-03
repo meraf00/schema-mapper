@@ -7,7 +7,8 @@ import {
   serviceTemplate,
 } from './service.template';
 import { NestInjectRepository, NestInjectable } from '../dependency/nestjs';
-import { createDtoTemplate, updateDtoTemplate } from '../dto/dto.template';
+import { Entity } from '../entity';
+import { CreateDto, UpdateDto } from '../dto/dto';
 
 export class Service implements Importable {
   name: string;
@@ -27,20 +28,9 @@ export class Service implements Importable {
 
         new TypeOrmRepository(this.table.name),
 
-        {
-          name: createDtoTemplate({ name: Case.pascal(this.table.name) }),
-          module: this.module,
-        } as Importable,
-
-        {
-          name: updateDtoTemplate({ name: Case.pascal(this.table.name) }),
-          module: this.module,
-        } as Importable,
-
-        {
-          name: Case.pascal(this.table.name),
-          module: this.module,
-        } as Importable,
+        new CreateDto(this.module, this.table),
+        new UpdateDto(this.module, this.table),
+        new Entity(this.module, this.table, []),
       ],
     );
   }

@@ -2,7 +2,11 @@ import { Table } from 'src/schema/entities';
 import { Importable } from '../dependency';
 import { Case } from 'change-case-all';
 import { DtoAttribute } from './dto-attribute';
-import { dtoTemplate } from './dto.template';
+import {
+  createDtoTemplate,
+  dtoTemplate,
+  updateDtoTemplate,
+} from './dto.template';
 
 export class CreateDto implements Importable {
   name: string;
@@ -13,14 +17,21 @@ export class CreateDto implements Importable {
     public module: string,
     readonly table: Table,
   ) {
-    this.name = Case.pascal(table.name);
+    this.name = createDtoTemplate({ name: Case.pascal(table.name) });
 
     this.attributes = this.table.attributes.map(
       (attribute) => new DtoAttribute(attribute),
     );
 
     this.dependency.push(
-      ...this.attributes.flatMap((attribute) => attribute.dependency),
+      ...this.attributes.flatMap((attribute) =>
+        attribute.dependency.map((dep) => {
+          if (dep.module === null) {
+            dep.module = this.module;
+          }
+          return dep;
+        }),
+      ),
     );
   }
 
@@ -41,7 +52,7 @@ export class UpdateDto implements Importable {
     public module: string,
     readonly table: Table,
   ) {
-    this.name = Case.pascal(table.name);
+    this.name = updateDtoTemplate({ name: Case.pascal(table.name) });
 
     this.attributes = this.table.attributes.map(
       (attribute) => new DtoAttribute(attribute, true),

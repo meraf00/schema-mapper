@@ -6,6 +6,7 @@ import {
   backrefOneToOneTemplate,
 } from './attribute.template';
 import { Case } from 'change-case-all';
+import { Entity } from './entity';
 
 export class BackRef {
   dependency: Importable[] = [];
@@ -17,10 +18,9 @@ export class BackRef {
       this.attribute.isForeign &&
       this.attribute.references.table.id !== this.attribute.table.id
     ) {
-      this.dependency.push({
-        name: this.attribute.references.table.name,
-        module: null,
-      } as Importable);
+      this.dependency.push(
+        new Entity(null, this.attribute.references.table, []),
+      );
     }
   }
 

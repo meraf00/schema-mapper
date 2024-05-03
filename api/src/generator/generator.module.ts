@@ -6,6 +6,7 @@ import { BullModule } from '@nestjs/bull';
 import { CODE_GENERATION } from './injectionKeys';
 import { GeneratorWorker } from './services/generator.worker';
 import { CodeGeneratorService } from './services/generator.svc';
+import { FileService } from './services/file.service';
 
 @Module({
   imports: [
@@ -15,6 +16,11 @@ import { CodeGeneratorService } from './services/generator.svc';
     }),
   ],
   controllers: [GeneratorController],
-  providers: [GeneratorService, GeneratorWorker, CodeGeneratorService],
+  providers: [
+    GeneratorService,
+    GeneratorWorker,
+    CodeGeneratorService,
+    FileService,
+  ],
 })
 export class GeneratorModule {}

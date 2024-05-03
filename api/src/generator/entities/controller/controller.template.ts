@@ -25,7 +25,7 @@ interface ControllerContext {
   updateDtoClass: string;
 }
 
-const controller = `@Controller('{{route}}')
+const controller = `@Controller(':{{route}}')
   export class {{name}} {
   
       constructor(private readonly {{service}}: {{serviceClass}}) {}
@@ -69,7 +69,11 @@ const controller = `@Controller('{{route}}')
   
   }`;
 
-export const controllerNameTemplate =
-  Handlebars.compile<NameContext>(controllerName);
-export const controllerTemplate =
-  Handlebars.compile<ControllerContext>(controller);
+export const controllerNameTemplate = Handlebars.compile<NameContext>(
+  controllerName,
+  { noEscape: true },
+);
+export const controllerTemplate = Handlebars.compile<ControllerContext>(
+  controller,
+  { noEscape: true },
+);

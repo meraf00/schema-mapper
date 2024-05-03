@@ -19,6 +19,8 @@ import {
   NestPost,
   NestPut,
 } from '../dependency/nestjs';
+import { Service } from '../service/service';
+import { CreateDto, UpdateDto } from '../dto/dto';
 
 export class Controller implements Importable {
   name: string;
@@ -41,20 +43,9 @@ export class Controller implements Importable {
         new NestParam(),
         new NestNotFoundException(),
 
-        {
-          name: createDtoTemplate({ name: Case.pascal(this.table.name) }),
-          module: this.module,
-        } as Importable,
-
-        {
-          name: updateDtoTemplate({ name: Case.pascal(this.table.name) }),
-          module: this.module,
-        } as Importable,
-
-        {
-          name: serviceNameTemplate({ name: Case.pascal(this.table.name) }),
-          module: this.module,
-        } as Importable,
+        new CreateDto(this.module, this.table),
+        new UpdateDto(this.module, this.table),
+        new Service(this.module, this.table),
       ],
     );
   }

@@ -3,8 +3,12 @@ import { Importable } from '../dependency';
 import { Schema } from 'src/schema/entities';
 import { serviceNameTemplate } from '../service/service.template';
 import { controllerNameTemplate } from '../controller/controller.template';
-import { moduleTemplate } from './module.template';
-import { NestTypeOrmModule } from '../dependency/nestjs';
+import { moduleNameTemplate, moduleTemplate } from './module.template';
+import { NestModule, NestTypeOrmModule } from '../dependency/nestjs';
+import { Entity } from '../entity';
+import { Service } from '../service/service';
+import { Controller } from '../controller/controller';
+import { CreateDto, UpdateDto } from '../dto/dto';
 
 export class Module implements Importable {
   name: string;
@@ -14,7 +18,7 @@ export class Module implements Importable {
     public module: string,
     readonly schema: Schema,
   ) {
-    this.name = Case.pascal(this.module);
+    this.name = moduleNameTemplate({ name: Case.pascal(this.module) });
 
     this.dependency.push(
       ...this.entities,
@@ -24,45 +28,48 @@ export class Module implements Importable {
         type: 'forFeature',
         options: this.entities.map((entity) => entity.name),
       }),
+      new NestModule(),
     );
   }
 
   get entities(): Importable[] {
+    if (!this.schema) return [];
+
     return this.schema.tables.map(
       (table) =>
-        ({
-          name: Case.pascal(table.name),
-          module: this.module,
-        }) as Importable,
+        new Entity(
+          this.module,
+          table,
+          this.schema.tables.flatMap((table) => table.attributes),
+        ),
     );
   }
 
   get providers(): Importable[] {
+    if (!this.schema) return [];
+
     return this.schema.tables
       .filter((table) => table.isAggregate)
-      .map(
-        (table) =>
-          ({
-            name: serviceNameTemplate({
-              name: Case.pascal(table.name),
-            }),
-            module: this.module,
-          }) as Importable,
-      );
+      .map((table) => new Service(this.module, table));
   }
 
   get controllers(): Importable[] {
+    if (!this.schema) return [];
+
     return this.schema.tables
       .filter((table) => table.isAggregate)
-      .map(
-        (table) =>
-          ({
-            name: controllerNameTemplate({
-              name: Case.pascal(table.name),
-            }),
-            module: this.module,
-          }) as Importable,
-      );
+      .map((table) => new Controller(this.module, table));
+  }
+
+  get dtos(): Importable[] {
+    if (!this.schema) return [];
+
+    return this.schema.tables
+      .filter((table) => table.isAggregate)
+      .flatMap((table) => [
+        new CreateDto(this.module, table),
+        new UpdateDto(this.module, table),
+      ]);
   }
 
   code(): string {

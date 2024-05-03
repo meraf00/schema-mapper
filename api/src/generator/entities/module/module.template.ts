@@ -1,3 +1,5 @@
+import Handlebars from 'handlebars';
+
 interface ModuleTemplate {
   imports: string[];
   controllers: string[];
@@ -7,21 +9,29 @@ interface ModuleTemplate {
 
 const nestModule = `@Module({
     imports: [
-        {#each imports}
+        {{#each imports}}
         {{{this}}},
-        {/each}
+        {{/each}}
     ],
     controllers: [
-        {#each controllers}
+        {{#each controllers}}
         {{{this}}},
-        {/each}
+        {{/each}}
     ],
     providers: [
-        {#each providers}
+        {{#each providers}}
         {{{this}}},
-        {/each}
+        {{/each}}
     ],
 })
 export class {{name}} {}`;
+
+interface NameContext {
+  name: string;
+}
+
+const moduleName = '{{name}}Module';
+
+export const moduleNameTemplate = Handlebars.compile<NameContext>(moduleName);
 
 export const moduleTemplate = Handlebars.compile<ModuleTemplate>(nestModule);

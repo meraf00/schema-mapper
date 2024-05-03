@@ -40,7 +40,7 @@ const mapTypeToDtoType = (type: string) => {
 export class DtoAttribute {
   name: string;
 
-  dependency: Importable[];
+  dependency: Importable[] = [];
 
   constructor(
     readonly attribute: Attribute,

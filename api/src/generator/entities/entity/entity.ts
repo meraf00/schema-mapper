@@ -17,9 +17,9 @@ export class Entity implements Importable {
   ) {
     this.name = Case.pascal(table.name);
 
-    this.attributes = this.table.attributes.map(
-      (attribute) => new AttributeCode(attribute),
-    );
+    this.attributes =
+      this.table.attributes?.map((attribute) => new AttributeCode(attribute)) ||
+      [];
 
     this.schemaAttributes
       .filter(

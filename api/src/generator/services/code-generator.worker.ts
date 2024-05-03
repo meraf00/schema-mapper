@@ -12,16 +12,6 @@ export class CodeGeneratorWorker {
   async generate(job: Job) {
     const schema = job.data;
 
-    this.codeGeneratorService
-      .createEntities(schema)
-      .map((e) => console.log(e.code()));
-    this.codeGeneratorService
-      .createServices(schema)
-      .map((e) => console.log(e.code()));
-    this.codeGeneratorService
-      .createControllers(schema)
-      .map((e) => console.log(e.code()));
-
     const onComplete = async (filePath: string) => {
       await job.moveToCompleted(filePath, true);
     };

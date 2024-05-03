@@ -221,15 +221,8 @@ export class AppModule {}`,
   async generateCode(job: Job) {
     const schema = job.data;
 
-    this.codeGeneratorService
-      .createEntities(schema)
-      .map((e) => console.log(e.code()));
-    this.codeGeneratorService
-      .createServices(schema)
-      .map((e) => console.log(e.code()));
-    this.codeGeneratorService
-      .createControllers(schema)
-      .map((e) => console.log(e.code()));
+    await this.codeGeneratorService.generate([schema]);
+    console.log('done');
 
     const resourceMap = new Map<string, string>();
 

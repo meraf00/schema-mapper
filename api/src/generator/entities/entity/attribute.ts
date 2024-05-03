@@ -10,6 +10,7 @@ import {
 import { Importable } from '../dependency';
 import { attributeTemplate } from './attribute.template';
 import { Case } from 'change-case-all';
+import { Entity } from './entity';
 
 export class AttributeCode {
   dependency: Importable[] = [];
@@ -21,10 +22,9 @@ export class AttributeCode {
       this.attribute.isForeign &&
       this.attribute.references.table.id !== this.attribute.table.id
     ) {
-      this.dependency.push({
-        name: this.attribute.references.table.name,
-        module: null,
-      } as Importable);
+      this.dependency.push(
+        new Entity(null, this.attribute.references.table, []),
+      );
     }
   }
 
