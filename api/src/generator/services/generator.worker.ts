@@ -13,7 +13,7 @@ export class GeneratorWorker {
 
     try {
       const filepath = await this.codeGeneratorService.generate([schema]);
-      await job.moveToCompleted(filepath, true);
+      return filepath;
     } catch (error) {
       await job.moveToFailed(error);
     }
@@ -22,5 +22,6 @@ export class GeneratorWorker {
   @OnQueueCompleted()
   onCompleted(job: Job) {
     console.log(`Job completed with result`);
+    console.log(job);
   }
 }

@@ -48,6 +48,20 @@ export class Controller implements Importable {
         new Service(this.module, this.table),
       ],
     );
+
+    const primaryAttribute = this.table.attributes.find(
+      (attr) => attr.isPrimary,
+    );
+
+    const attribType = primaryAttribute
+      ? mapAttributeType(primaryAttribute.type)
+      : 'string';
+
+    if (attribType === 'string') {
+      this.dependency.push(new NestParseUUIDPipe());
+    } else if (attribType == 'number') {
+      this.dependency.push(new NestParseIntPipe());
+    }
   }
 
   code(): string {

@@ -50,18 +50,20 @@ export class CodeGeneratorService {
     for (const importable of importables) {
       const path = this.resolvePath(importable, folderStructrue);
 
-      const importStmts = importable.dependency.map((dependency) =>
-        importTemplate({
-          name: dependency.name,
-          path: this.resolvePath(dependency, folderStructrue),
-        }),
+      const importStmts = new Set(
+        importable.dependency.map((dependency) =>
+          importTemplate({
+            name: dependency.name,
+            path: this.resolvePath(dependency, folderStructrue),
+          }),
+        ),
       );
 
       await this.fileService.createFile(
         workingDir,
         path,
         fileTemplate({
-          imports: importStmts,
+          imports: Array.from(importStmts.values()),
           content: importable.code(),
         }),
       );
@@ -144,13 +146,13 @@ export class CodeGeneratorService {
     const modules = [
       ...schemas.map((schema) => new Module(Case.pascal(schema.name), schema)),
       new App('App', schemas, {
-        type: 'postgres',
-        host: 'localhost',
+        type: "'postgres'" as 'postgres',
+        host: "'localhost'",
         port: 5432,
-        username: 'postgres',
-        password: 'root',
-        database: 'schema_mapper',
-        entities: [__dirname + '/**/*.entity{.ts}'],
+        username: "'postgres'",
+        password: "''",
+        database: "'database_name'",
+        entities: ['[__dirname + "/**/*.entity{.ts}"]'],
         synchronize: true,
         autoLoadEntities: true,
       }),

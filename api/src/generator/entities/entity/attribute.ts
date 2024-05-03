@@ -79,10 +79,18 @@ export class AttributeCode {
   }
 
   code(): string {
+    let type: string;
+
+    if (this.attribute.isForeign) {
+      type = Case.pascal(this.attribute.references.table.name);
+    } else {
+      type = mapAttributeType(this.attribute.type);
+    }
+
     return attributeTemplate({
       decorators: this.decorators.map((decorator) => decorator.code()),
       name: Case.camel(this.attribute.name),
-      type: mapAttributeType(this.attribute.type),
+      type,
     });
   }
 }

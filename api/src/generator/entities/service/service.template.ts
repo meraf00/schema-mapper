@@ -38,11 +38,11 @@ export class {{name}} {
 
     async update({{entity.primaryKey}}: {{entity.primaryKeyType}}, data: Update{{entity.name}}Dto): Promise<{{entity.name}}> {
         await this.{{repository}}.update({{entity.primaryKey}}, data);
-        return await this.findOne({ where: { {{entity.primaryKey}} } });
+        return await this.findOne({{entity.primaryKey}});
     }
 
     async delete({{entity.primaryKey}}: {{entity.primaryKeyType}}): Promise<void> {
-        return await this.{{repository}}.delete({{entity.primaryKey}});
+        await this.{{repository}}.delete({{entity.primaryKey}});
     }
 }`;
 

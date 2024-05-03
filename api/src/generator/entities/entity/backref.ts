@@ -13,15 +13,7 @@ export class BackRef {
 
   constructor(readonly attribute: Attribute) {
     this.dependency.push(...this.decorators);
-
-    if (
-      this.attribute.isForeign &&
-      this.attribute.references.table.id !== this.attribute.table.id
-    ) {
-      this.dependency.push(
-        new Entity(null, this.attribute.references.table, []),
-      );
-    }
+    this.dependency.push(new Entity(null, this.attribute.table, []));
   }
 
   get decorators(): Importable[] {

@@ -7,7 +7,7 @@ interface ForRootContext {
 
 const typeormForRoot = `TypeOrmModule.forRoot({
     {{#each options}}
-    {{{@key}}}:{{{this}}}
+    {{{@key}}}:{{{this}}},
     {{/each}}
 })`;
 
