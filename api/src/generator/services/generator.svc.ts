@@ -73,7 +73,7 @@ export class CodeGeneratorService {
       structure[Case.pascal(module)] = {
         Controller: `/src/${Case.kebab(module)}/controllers`,
         Service: `/src/${Case.kebab(module)}/services`,
-        Entity: `/src/${Case.kebab(module)}/entities`,
+        Entity: `/src/entities/${Case.kebab(module)}`,
         Dto: `/src/${Case.kebab(module)}/dto`,
         Module: `/src/${Case.kebab(module)}`,
       };
@@ -105,11 +105,12 @@ export class CodeGeneratorService {
     return `${module[type]}/${Case.dot(importable.name)}`;
   }
 
-  createModules(schema: Schema[]): Module[] {
+  createModules(schemas: Schema[]): Module[] {
     const modules = [
-      ...schema.map((schema) => new Module(Case.pascal(schema.name), schema)),
-      new App('App', {}),
+      ...schemas.map((schema) => new Module(Case.pascal(schema.name), schema)),
+      new App('App', schemas, {}),
     ];
+
     return modules;
   }
 }

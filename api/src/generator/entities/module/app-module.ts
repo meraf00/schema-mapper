@@ -4,6 +4,7 @@ import { moduleNameTemplate, moduleTemplate } from './module.template';
 import { NestModule, NestTypeOrmModule } from '../dependency/nestjs';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Module } from './module';
+import { Schema } from 'src/schema/entities';
 
 export class App extends Module {
   name: string;
@@ -11,6 +12,7 @@ export class App extends Module {
 
   constructor(
     public module: string,
+    readonly schemas: Schema[],
     readonly options: TypeOrmModuleOptions,
   ) {
     super(module, null);
@@ -23,6 +25,7 @@ export class App extends Module {
         options,
       }),
       new NestModule(),
+      ...schemas.map((s) => new Module(s.name, s)),
     );
   }
 
@@ -34,6 +37,7 @@ export class App extends Module {
           type: 'forRoot',
           options: this.options,
         }).code(),
+        ...this.schemas.map((s) => new Module(s.name, s).name),
       ],
       providers: [],
       controllers: [],

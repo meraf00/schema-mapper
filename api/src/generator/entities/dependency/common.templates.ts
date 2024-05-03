@@ -21,6 +21,8 @@ interface FileContext {
 
 const file = `{{#each imports}}{{{this}}}
 {{/each}}
+
+
 {{{content}}}`;
 
 export const decoratorTemplate =
