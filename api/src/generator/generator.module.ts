@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { GeneratorService } from './services/generator.service';
+
 import { SchemaModule } from 'src/schema/schema.module';
 import { GeneratorController } from './controllers/generator.controller';
 import { BullModule } from '@nestjs/bull';
 import { CODE_GENERATION } from './injectionKeys';
 import { GeneratorWorker } from './services/generator.worker';
+import { CodeGeneratorService } from './services/generator.service';
+import { FileService } from './services/file.service';
 
 @Module({
   imports: [
@@ -13,7 +15,7 @@ import { GeneratorWorker } from './services/generator.worker';
       name: CODE_GENERATION,
     }),
   ],
-  providers: [GeneratorService, GeneratorWorker],
   controllers: [GeneratorController],
+  providers: [GeneratorWorker, CodeGeneratorService, FileService],
 })
 export class GeneratorModule {}

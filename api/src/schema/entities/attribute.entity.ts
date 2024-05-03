@@ -7,26 +7,8 @@ import {
   Unique,
 } from 'typeorm';
 import { Table } from './table.entity';
-
-export enum AttributeType {
-  CHAR = 'CHAR',
-  VARCHAR = 'VARCHAR',
-  TEXT = 'TEXT',
-  BOOLEAN = 'BOOLEAN',
-  TINYINT = 'TINYINT',
-  INTEGER = 'INTEGER',
-  BIGINT = 'BIGINT',
-  FLOAT = 'FLOAT',
-  DOUBLE = 'DOUBLE',
-  DATE = 'DATE',
-  TIME = 'TIME',
-  TIMESTAMP = 'TIMESTAMP',
-}
-
-export enum RelationType {
-  ONE_TO_ONE = 'ONE_TO_ONE',
-  MANY_TO_ONE = 'MANY_TO_ONE',
-}
+import { AttributeType } from './enums';
+import { RelationType } from './enums';
 
 @Entity({ name: 'attribute' })
 @Unique(['name', 'tableId'])
