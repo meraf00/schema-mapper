@@ -1,21 +1,19 @@
 import {
   Controller,
   Get,
-  HttpCode,
   NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
   StreamableFile,
 } from '@nestjs/common';
-import { GeneratorService } from '../services/generator.service';
 import { createReadStream } from 'fs';
 import { join } from 'path';
-import { CodeGeneratorService } from '../services/generator.svc';
+import { CodeGeneratorService } from '../services/generator.service';
 
 @Controller('generator')
 export class GeneratorController {
-  constructor(private readonly generatorService: GeneratorService) {}
+  constructor(private readonly generatorService: CodeGeneratorService) {}
 
   @Post(':id')
   async generate(
