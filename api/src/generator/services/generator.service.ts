@@ -121,8 +121,6 @@ export class CodeGeneratorService {
       Module: '/src',
     };
 
-    console.log(structure);
-
     return structure;
   }
 

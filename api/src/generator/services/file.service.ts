@@ -16,7 +16,7 @@ export class FileService {
   }
 
   async createScaffoldDir() {
-    const tempFolder = path.join(this.storagePath, 'temp');
+    const tempFolder = path.join(this.storagePath, uuid4());
 
     if (fs.existsSync(tempFolder)) {
       fs.rmSync(tempFolder, {
