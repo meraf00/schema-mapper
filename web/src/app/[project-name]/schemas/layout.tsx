@@ -8,15 +8,29 @@ import React from 'react';
 export default function SchemaLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { isPending, error, data, isFetching } = useQuery({
+  const {
+    isPending,
+    error,
+    data: schemas,
+    isFetching,
+  } = useQuery({
     queryKey: [cacheKeys.schemas],
     queryFn: getSchemas,
   });
 
   return (
-    <section className="flex gap-5">
-      <div className="w-1/5">{data && <SchemaExplorer schemas={data} />}</div>
-      <div className="w-full">{children}</div>
+    <section className="flex gap-5 sticky top-10 overflow-clip">
+      <div className="w-1/5 overflow-auto">
+        {schemas && <SchemaExplorer schemas={schemas} />}
+      </div>
+      <div
+        className="w-full overflow-auto"
+        style={{
+          maxHeight: 'calc(100vh - 36px)',
+        }}
+      >
+        {children}
+      </div>
     </section>
   );
 }

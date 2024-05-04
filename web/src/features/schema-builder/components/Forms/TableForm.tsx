@@ -62,7 +62,6 @@ export default function TableForm({ table, onSubmit }: TableFormProps) {
             label="Aggregate"
             placeholder="Aggregate"
             {...field}
-            key="aggregate"
             onChange={(event) => {
               setValue('isAggregate', event.target.checked ? 'true' : 'false');
             }}

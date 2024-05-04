@@ -1,3 +1,4 @@
+import { AttributeFormData } from '@/features/schema-builder/components/Forms/AttributeForm';
 import axios from 'axios';
 
 const instance = axios.create({
@@ -19,7 +20,6 @@ export interface AttributeData {
     | 'DATE'
     | 'TIME'
     | 'TIMESTAMP';
-  tableId: string;
   isNullable: boolean;
   isUnique: boolean;
   isPrimary: boolean;
@@ -28,6 +28,7 @@ export interface AttributeData {
   references?: string;
   relationType?: 'ONE_TO_ONE' | 'MANY_TO_ONE';
   backref?: string;
+  tableId?: string;
 }
 
 export const cacheKeys = {
@@ -112,6 +113,7 @@ export const updateAttribute = async (
 
 export const deleteAttribute = async (id: string) => {
   const response = await instance.delete(`attributes/${id}`);
+  console.log(response);
   return response.data;
 };
 

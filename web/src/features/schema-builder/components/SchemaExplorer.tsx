@@ -7,6 +7,14 @@ import { IconPlus, IconReload } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal } from '@mantine/core';
 import { Hierarchy } from './Hierarchy';
+import SchemaForm from './Forms/SchemaForm';
+import { cacheKeys, createSchema } from '@/api';
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { notifications } from '@mantine/notifications';
 
 export interface SchemaExplorerProps
   extends React.DetailedHTMLProps<
@@ -17,9 +25,26 @@ export interface SchemaExplorerProps
 }
 
 export const SchemaExplorer = ({ schemas, ...props }: SchemaExplorerProps) => {
+  const queryClient = useQueryClient();
   const [opened, { open, close }] = useDisclosure(false);
 
-  let form, title;
+  const mutation = useMutation({
+    mutationFn: createSchema,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [cacheKeys.schemas] });
+      notifications.show({
+        title: 'Success',
+        message: 'Schema created successfully',
+        color: 'blue',
+      });
+      close();
+    },
+  });
+
+  const handleCreateSchema = (data: { name: string }) => {
+    mutation.mutate(data.name);
+    close();
+  };
 
   return (
     <>
@@ -27,13 +52,13 @@ export const SchemaExplorer = ({ schemas, ...props }: SchemaExplorerProps) => {
         <Modal
           opened={opened}
           onClose={close}
-          title={title}
+          title={'Create Schema'}
           overlayProps={{
             backgroundOpacity: 0.55,
             blur: 3,
           }}
         >
-          {form}
+          <SchemaForm onSubmit={handleCreateSchema} />
         </Modal>
 
         <div className="flex text-sm justify-between p-2 items-center mb-2">

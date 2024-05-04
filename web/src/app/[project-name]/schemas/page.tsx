@@ -1,3 +1,5 @@
-export default function Page() {
-  return <div>Schemas</div>;
+import React from 'react';
+
+export default function page() {
+  return <></>;
 }
