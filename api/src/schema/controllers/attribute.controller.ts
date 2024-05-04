@@ -41,7 +41,7 @@ export class AttributeController {
 
   @Get(':id')
   @ApiParam({ name: 'id', type: String })
-  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  async findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     const attribute = await this.attributeService.findOne(id);
     if (!attribute) {
       throw new NotFoundException();
@@ -52,7 +52,7 @@ export class AttributeController {
   @Put(':id')
   @ApiParam({ name: 'id', type: String })
   async update(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() updateAttributeDto: UpdateAttributeDto,
   ) {
     try {
@@ -64,7 +64,7 @@ export class AttributeController {
 
   @Delete(':id')
   @ApiParam({ name: 'id', type: String })
-  async delete(@Param('id', new ParseUUIDPipe()) id: string) {
+  async delete(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     try {
       return await this.attributeService.delete(id);
     } catch (e) {
