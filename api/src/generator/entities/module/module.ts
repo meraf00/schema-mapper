@@ -1,8 +1,6 @@
 import { Case } from 'change-case-all';
 import { Importable } from '../dependency';
 import { Schema } from 'src/schema/entities';
-import { serviceNameTemplate } from '../service/service.template';
-import { controllerNameTemplate } from '../controller/controller.template';
 import { moduleNameTemplate, moduleTemplate } from './module.template';
 import { NestModule, NestTypeOrmModule } from '../dependency/nestjs';
 import { Entity } from '../entity';

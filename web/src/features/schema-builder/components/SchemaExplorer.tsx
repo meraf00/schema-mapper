@@ -3,17 +3,13 @@
 import React from 'react';
 
 import { Schema } from '@/lib/model/schema';
-import { IconPlus, IconReload } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { Modal } from '@mantine/core';
 import { Hierarchy } from './Hierarchy';
 import SchemaForm from './Forms/SchemaForm';
 import { cacheKeys, createSchema } from '@/api';
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 
 export interface SchemaExplorerProps

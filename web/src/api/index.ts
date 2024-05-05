@@ -113,7 +113,6 @@ export const updateAttribute = async (
 
 export const deleteAttribute = async (id: string) => {
   const response = await instance.delete(`attributes/${id}`);
-  console.log(response);
   return response.data;
 };
 
@@ -127,8 +126,10 @@ export const deleteSchema = async (id: string) => {
   return response.data;
 };
 
-export const generateCode = async (id: string) => {
-  const response = await instance.post(`generator/${id}`);
+export const generateCode = async (schemaIds: string[]) => {
+  console.log(schemaIds, '<<<<<<;');
+  const response = await instance.post(`generator`, { schemas: schemaIds });
+  console.log(response, '<<<<<');
   return response.data;
 };
 

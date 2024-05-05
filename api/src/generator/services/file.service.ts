@@ -11,8 +11,10 @@ export class FileService {
   scaffoldPath: string;
 
   constructor() {
-    this.storagePath = path.join(process.cwd(), 'storage');
-    this.scaffoldPath = path.join(process.cwd(), 'storage/base');
+    this.storagePath = path.normalize(path.join(process.cwd(), '../storage'));
+    this.scaffoldPath = path.normalize(
+      path.join(process.cwd(), '../storage/base'),
+    );
   }
 
   async createScaffoldDir() {
