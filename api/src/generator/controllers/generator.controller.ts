@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   NotFoundException,
@@ -10,6 +11,7 @@ import {
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { CodeGeneratorService } from '../services/generator.service';
+import { GenerateCodeDto } from '../dto/request.dto';
 
 @Controller('generator')
 export class GeneratorController {
@@ -20,7 +22,16 @@ export class GeneratorController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) schemaId: string,
   ) {
     try {
-      return await this.generatorService.enqueueJob(schemaId);
+      return await this.generatorService.enqueueJob({ schemas: [schemaId] });
+    } catch (e) {
+      throw new NotFoundException(e.message);
+    }
+  }
+
+  @Post()
+  async generateMultiple(@Body() generateCodeDto: GenerateCodeDto) {
+    try {
+      return await this.generatorService.enqueueJob(generateCodeDto);
     } catch (e) {
       throw new NotFoundException(e.message);
     }
@@ -31,7 +42,7 @@ export class GeneratorController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) schemaId: string,
   ) {
     try {
-      return await this.generatorService.enqueueJob(schemaId);
+      return await this.generatorService.enqueueJob({ schemas: [schemaId] });
     } catch (e) {
       throw new NotFoundException(e.message);
     }

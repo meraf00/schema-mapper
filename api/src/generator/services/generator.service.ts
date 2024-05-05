@@ -90,14 +90,16 @@ export class CodeGeneratorService {
     return await this.queue.getJob(jobId);
   }
 
-  async enqueueJob(schemaId: string) {
-    const schema = await this.schemaService.findOne(schemaId);
+  async enqueueJob(generateCodeDto: { schemas: string[] }) {
+    const schemas = await Promise.all(
+      generateCodeDto.schemas.map((schemaId) =>
+        this.schemaService.findOne(schemaId),
+      ),
+    );
 
-    if (!schema) {
-      throw new Error('Schema not found');
-    }
+    console.log(schemas);
 
-    const job = await this.queue.add(schema);
+    const job = await this.queue.add(schemas);
 
     return job;
   }

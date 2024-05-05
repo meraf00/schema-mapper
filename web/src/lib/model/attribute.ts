@@ -35,6 +35,8 @@ export class Attribute {
 
   isGenerated: boolean;
 
+  tableId: string;
+
   references?: Attribute;
 
   relationType?: RelationType;
@@ -50,6 +52,7 @@ export class Attribute {
     isPrimary: boolean,
     isForeign: boolean,
     isGenerated: boolean,
+    tableId: string,
     relationType?: RelationType,
     references?: Attribute,
     backref?: string
@@ -62,6 +65,7 @@ export class Attribute {
     this.isPrimary = isPrimary;
     this.isForeign = isForeign;
     this.isGenerated = isGenerated;
+    this.tableId = tableId;
     this.references = references;
     this.relationType = relationType;
     this.backref = backref;

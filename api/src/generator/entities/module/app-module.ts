@@ -25,7 +25,7 @@ export class App extends Module {
         options,
       }),
       new NestModule(),
-      ...schemas.map((s) => new Module(s.name, s)),
+      ...schemas.map((s) => new Module(Case.pascal(s.name), s)),
     );
   }
 
@@ -37,7 +37,7 @@ export class App extends Module {
           type: 'forRoot',
           options: this.options,
         }).code(),
-        ...this.schemas.map((s) => new Module(s.name, s).name),
+        ...this.schemas.map((s) => new Module(Case.pascal(s.name), s).name),
       ],
       providers: [],
       controllers: [],

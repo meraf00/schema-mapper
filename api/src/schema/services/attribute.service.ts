@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { UtilityService } from 'src/common/utility/utility.service';
 import { InvalidAttributeTypeException } from '../exceptions/exceptions';
 import { CreateAttributeDto, UpdateAttributeDto } from '../dto/request.dto';
-import { AttributeType } from '../entities';
+import { AttributeType, RelationType } from '../entities';
 
 @Injectable()
 export class AttributeService {
@@ -33,11 +33,21 @@ export class AttributeService {
       throw new InvalidAttributeTypeException(createAttributeDto.type);
     }
 
+    try {
+      attribute.relationType = this.utilityService.enumFromValue(
+        createAttributeDto.relationType.toLocaleUpperCase(),
+        RelationType,
+      );
+    } catch (e) {
+      throw new InvalidAttributeTypeException(createAttributeDto.relationType);
+    }
+
     attribute.isForeign = createAttributeDto.isForeign;
     attribute.isGenerated = createAttributeDto.isGenerated;
     attribute.isNullable = createAttributeDto.isNullable;
     attribute.isPrimary = createAttributeDto.isPrimary;
     attribute.isUnique = createAttributeDto.isUnique;
+    attribute.backref = createAttributeDto.backref;
 
     return this.attributeRepository.save(attribute);
   }
