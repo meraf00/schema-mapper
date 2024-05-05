@@ -127,9 +127,7 @@ export const deleteSchema = async (id: string) => {
 };
 
 export const generateCode = async (schemaIds: string[]) => {
-  console.log(schemaIds, '<<<<<<;');
   const response = await instance.post(`generator`, { schemas: schemaIds });
-  console.log(response, '<<<<<');
   return response.data;
 };
 
