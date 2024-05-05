@@ -7,6 +7,7 @@ import { CODE_GENERATION } from './injectionKeys';
 import { GeneratorWorker } from './services/generator.worker';
 import { CodeGeneratorService } from './services/generator.service';
 import { FileService } from './services/file.service';
+import { GeneratorGateway } from './controllers/generator.gateway';
 
 @Module({
   imports: [
@@ -16,6 +17,11 @@ import { FileService } from './services/file.service';
     }),
   ],
   controllers: [GeneratorController],
-  providers: [GeneratorWorker, CodeGeneratorService, FileService],
+  providers: [
+    GeneratorWorker,
+    CodeGeneratorService,
+    FileService,
+    GeneratorGateway,
+  ],
 })
 export class GeneratorModule {}

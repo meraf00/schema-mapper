@@ -92,7 +92,6 @@ export default function TablePage() {
   };
 
   const handleAttributeCreate = (data: AttributeFormData) => {
-    console.log(data.relationType, data.backref);
     createAttributeMutation.mutate({
       tableId: params['table-id'] as string,
       name: data.name,

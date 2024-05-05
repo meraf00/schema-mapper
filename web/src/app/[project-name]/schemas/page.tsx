@@ -7,7 +7,7 @@ import GeneratorForm, {
 import { TaskList } from '@/features/schema-builder/components/TaskList';
 
 import { notifications } from '@mantine/notifications';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 
 export default function GenerateCodePage() {
