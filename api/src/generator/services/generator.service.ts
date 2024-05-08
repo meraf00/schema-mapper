@@ -109,20 +109,20 @@ export class CodeGeneratorService {
 
     for (const module of modules) {
       structure[Case.pascal(module)] = {
-        Controller: `/src/${Case.kebab(module)}/controllers`,
-        Service: `/src/${Case.kebab(module)}/services`,
-        Entity: `/src/entities/${Case.kebab(module)}`,
-        Dto: `/src/${Case.kebab(module)}/dto`,
-        Module: `/src/${Case.kebab(module)}`,
+        Controller: `src/${Case.kebab(module)}/controllers`,
+        Service: `src/${Case.kebab(module)}/services`,
+        Entity: `src/entities/${Case.kebab(module)}`,
+        Dto: `src/${Case.kebab(module)}/dto`,
+        Module: `src/${Case.kebab(module)}`,
       };
     }
 
     structure['App'] = {
-      Controller: `/src/controllers`,
-      Service: `/src/services`,
-      Entity: `/src/entities`,
-      Dto: `/src/dto`,
-      Module: '/src',
+      Controller: `src/controllers`,
+      Service: `src/services`,
+      Entity: `src/entities`,
+      Dto: `src/dto`,
+      Module: 'src',
     };
 
     return structure;

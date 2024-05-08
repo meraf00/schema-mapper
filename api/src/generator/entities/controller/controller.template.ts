@@ -25,7 +25,7 @@ interface ControllerContext {
   updateDtoClass: string;
 }
 
-const controller = `@Controller(':{{route}}')
+const controller = `@Controller('/{{route}}s')
   export class {{name}} {
   
       constructor(private readonly {{service}}: {{serviceClass}}) {}
