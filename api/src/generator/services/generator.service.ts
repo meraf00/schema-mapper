@@ -18,16 +18,18 @@ import { App } from '../entities/module/app-module';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { CODE_GENERATION } from '../injectionKeys';
+import { TemplateService } from './template.service';
 
 @Injectable()
 export class CodeGeneratorService {
   constructor(
     private schemaService: SchemaService,
+    private templateService: TemplateService,
     private fileService: FileService,
     @InjectQueue(CODE_GENERATION) private queue: Queue,
   ) {}
 
-  async generate(schemas: Schema[]): Promise<string> {
+  async generate(schemas: Schema[], template: string): Promise<string> {
     const modules = this.createModules(schemas);
 
     const importables = [
@@ -46,6 +48,8 @@ export class CodeGeneratorService {
     const workingDir = await this.fileService.createScaffoldDir();
 
     const folderStructrue = this.template(modules.map((m) => m.module));
+
+    // const folderStructure = this.resolveTemplate(template, template);
 
     for (const importable of importables) {
       const path = this.resolvePath(importable, folderStructrue);
@@ -90,16 +94,19 @@ export class CodeGeneratorService {
     return await this.queue.getJob(jobId);
   }
 
-  async enqueueJob(generateCodeDto: { schemas: string[] }) {
+  async enqueueJob(generateCodeDto: { schemas: string[]; template: string }) {
     const schemas = await Promise.all(
       generateCodeDto.schemas.map((schemaId) =>
         this.schemaService.findOne(schemaId),
       ),
     );
 
-    console.log(schemas);
+    const template = await this.templateService.findOne(
+      generateCodeDto.template,
+    );
 
-    const job = await this.queue.add(schemas);
+    const job = await this.queue.add({ template, schemas });
+    // const job = await this.queue.add({  schemas });
 
     return job;
   }
@@ -126,6 +133,11 @@ export class CodeGeneratorService {
     };
 
     return structure;
+  }
+
+  private resolveTemplate(template: string, modules: string) {
+    const t = Handlebars.compile(template);
+    return t({ modules });
   }
 
   private resolvePath(

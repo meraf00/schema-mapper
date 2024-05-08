@@ -17,32 +17,10 @@ import { GenerateCodeDto } from '../dto/request.dto';
 export class GeneratorController {
   constructor(private readonly generatorService: CodeGeneratorService) {}
 
-  @Post(':id')
-  async generate(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) schemaId: string,
-  ) {
-    try {
-      return await this.generatorService.enqueueJob({ schemas: [schemaId] });
-    } catch (e) {
-      throw new NotFoundException(e.message);
-    }
-  }
-
   @Post()
   async generateMultiple(@Body() generateCodeDto: GenerateCodeDto) {
     try {
       return await this.generatorService.enqueueJob(generateCodeDto);
-    } catch (e) {
-      throw new NotFoundException(e.message);
-    }
-  }
-
-  @Get(':id/generate')
-  async generate_(
-    @Param('id', new ParseUUIDPipe({ version: '4' })) schemaId: string,
-  ) {
-    try {
-      return await this.generatorService.enqueueJob({ schemas: [schemaId] });
     } catch (e) {
       throw new NotFoundException(e.message);
     }
@@ -59,7 +37,7 @@ export class GeneratorController {
   }
 
   @Get(':id/download')
-  async getFile(@Param('id') jobId): Promise<StreamableFile> {
+  async getFile(@Param('id') jobId: string): Promise<StreamableFile> {
     const job = await this.generatorService.getJob(jobId);
 
     const file = createReadStream(join(job.returnvalue));
