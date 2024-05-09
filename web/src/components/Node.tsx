@@ -8,27 +8,30 @@ import {
 
 export interface NodeProps {
   children?: React.ReactNode;
-  title: string;
-  isActive: boolean;
-  onClick?: () => void;
+  title: string | React.ReactNode;
+  isActive?: boolean;
+  onClick?: (e?: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
+  onContextMenu?: (e?: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void;
+  isClosed?: boolean;
 }
 
 export const Node = ({
   title,
   children,
   onClick,
+  onContextMenu,
   isActive = false,
+  isClosed = true,
 }: NodeProps) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(!isClosed);
 
   return (
     <div>
       <span
         className="flex items-center hover:bg-slate-200 w-full cursor-pointer rounded px-2 text-sm py-1"
         style={isActive ? { backgroundColor: 'rgb(147, 197, 253)' } : {}}
-        onClick={() => {
-          onClick ? onClick() : null;
-        }}
+        onContextMenu={onContextMenu}
+        onClick={(e) => (onClick ? onClick() : setIsOpen((state) => !state))}
       >
         {children ? (
           isOpen ? (

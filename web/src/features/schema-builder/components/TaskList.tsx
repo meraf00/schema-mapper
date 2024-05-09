@@ -6,7 +6,7 @@ import { LoadingOverlay, Table } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export const TaskList = () => {
   const route = usePathname();
@@ -89,7 +89,7 @@ export const TaskList = () => {
                       ${new Date(task.timestamp).toLocaleDateString()}`}
                     </Table.Td>
                     <Table.Td>
-                      {task.data
+                      {task.data.schemas
                         .map((schema: Schema) => (
                           <Link
                             key={schema.id}

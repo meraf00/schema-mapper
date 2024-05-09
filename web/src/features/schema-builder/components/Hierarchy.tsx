@@ -2,7 +2,7 @@
 
 import { Schema } from '@/lib/model/schema';
 import React from 'react';
-import { Node } from './Node';
+import { Node } from '@/components/Node';
 import { useParams, useRouter } from 'next/navigation';
 
 export interface Active {
