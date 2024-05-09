@@ -13,10 +13,13 @@ export class GeneratorWorker {
 
   @Process()
   async generateCode(job: Job) {
-    const schemas = job.data;
+    const { schemas, template } = job.data;
 
     try {
-      const filepath = await this.codeGeneratorService.generate(schemas);
+      const filepath = await this.codeGeneratorService.generate(
+        schemas,
+        JSON.parse(template),
+      );
       return filepath;
     } catch (error) {
       console.error(error);

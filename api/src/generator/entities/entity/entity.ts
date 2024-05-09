@@ -1,6 +1,6 @@
 import { Attribute, Table } from 'src/schema/entities';
 import { AttributeCode } from './attribute';
-import { entityTemplate } from './entity.template';
+import { entityNameTemplate, entityTemplate } from './entity.template';
 import { Importable, TypeOrmEntity } from '../dependency';
 import { Case } from 'change-case-all';
 import { BackRef } from './backref';
@@ -15,7 +15,7 @@ export class Entity implements Importable {
     readonly table: Table,
     readonly schemaAttributes: Attribute[],
   ) {
-    this.name = Case.pascal(table.name);
+    this.name = entityNameTemplate({ name: Case.pascal(table.name) });
 
     this.attributes =
       this.table.attributes?.map((attribute) => new AttributeCode(attribute)) ||

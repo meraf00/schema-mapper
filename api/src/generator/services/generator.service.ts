@@ -1,3 +1,12 @@
+/**
+ {
+  "schemas": [
+    "de24af37-a0ca-4fc2-903a-dbcec29a5723"
+  ],
+  "template": "{\"OrganizationStructure\": {\"Controller\": \"src/organization-structure/controllers\",\"Service\": \"src/organization-structure/services\", \"Entity\":\"src/entities/organization-structure\",\"Dto\": \"src/organization-structure/dto\",\"Module\": \"src/organization-structure\"},\"App\": {\"Controller\": \"src/controllers\",\"Service\": \"src/services\",\"Entity\": \"src/entities\",\"Dto\": \"src/dto\",\"Module\": \"src\"}}"
+}
+ */
+
 import { Injectable } from '@nestjs/common';
 import { SchemaService } from 'src/schema/services';
 import { Schema } from 'src/schema/entities';
@@ -29,7 +38,10 @@ export class CodeGeneratorService {
     @InjectQueue(CODE_GENERATION) private queue: Queue,
   ) {}
 
-  async generate(schemas: Schema[], template: string): Promise<string> {
+  async generate(
+    schemas: Schema[],
+    template: FolderStructure,
+  ): Promise<string> {
     const modules = this.createModules(schemas);
 
     const importables = [
@@ -47,18 +59,22 @@ export class CodeGeneratorService {
 
     const workingDir = await this.fileService.createScaffoldDir();
 
-    const folderStructrue = this.template(modules.map((m) => m.module));
+    console.log(this.template(modules.map((m) => m.module)));
 
-    // const folderStructure = this.resolveTemplate(template, template);
+    // const folderStructure = this.resolveTemplate(
+    //   template,
+    //   modules.map((m) => m.module),
+    // );
+    const folderStructure = template;
 
     for (const importable of importables) {
-      const path = this.resolvePath(importable, folderStructrue);
+      const path = this.resolvePath(importable, folderStructure);
 
       const importStmts = new Set(
         importable.dependency.map((dependency) =>
           importTemplate({
             name: dependency.name,
-            path: this.resolvePath(dependency, folderStructrue),
+            path: this.resolvePath(dependency, folderStructure),
           }),
         ),
       );
@@ -101,11 +117,14 @@ export class CodeGeneratorService {
       ),
     );
 
-    const template = await this.templateService.findOne(
-      generateCodeDto.template,
-    );
+    // const template = await this.templateService.findOne(
+    //   generateCodeDto.template,
+    // );
 
-    const job = await this.queue.add({ template, schemas });
+    const job = await this.queue.add({
+      template: generateCodeDto.template,
+      schemas,
+    });
     // const job = await this.queue.add({  schemas });
 
     return job;
@@ -135,9 +154,12 @@ export class CodeGeneratorService {
     return structure;
   }
 
-  private resolveTemplate(template: string, modules: string) {
+  private resolveTemplate(
+    template: string,
+    modules: string[],
+  ): FolderStructure {
     const t = Handlebars.compile(template);
-    return t({ modules });
+    return JSON.parse(t({ modules }));
   }
 
   private resolvePath(

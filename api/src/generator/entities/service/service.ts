@@ -9,6 +9,7 @@ import {
 import { NestInjectRepository, NestInjectable } from '../dependency/nestjs';
 import { Entity } from '../entity';
 import { CreateDto, UpdateDto } from '../dto/dto';
+import { entityNameTemplate } from '../entity/entity.template';
 
 export class Service implements Importable {
   name: string;
@@ -51,7 +52,7 @@ export class Service implements Importable {
     return serviceTemplate({
       name: this.name,
       entity: {
-        name: Case.pascal(this.table.name),
+        name: entityNameTemplate({ name: Case.pascal(this.table.name) }),
         primaryKey: Case.camel(primaryAttribute.name),
         primaryKeyType: attribType,
       },

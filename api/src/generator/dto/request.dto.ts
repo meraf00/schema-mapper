@@ -7,7 +7,7 @@ export class GenerateCodeDto {
   @IsArray()
   schemas: string[];
 
-  @ApiProperty({ type: 'string', format: 'uuid' })
+  @ApiProperty({ type: 'string' })
   @IsNotEmpty()
   @IsString()
   template: string;
