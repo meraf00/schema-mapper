@@ -6,109 +6,24 @@ import React, { useMemo, useState } from 'react';
 import FolderForm, { FolderFormData } from '../Forms/FolderForm';
 import { FileSystemNode, FileType, InternalType } from '@/lib/model/template';
 import { drawFolder } from './FolderHierarchy';
+import {
+  cloneTree,
+  deleteNode,
+  findUnusedInternalTypes,
+} from './FormBuilderHelpers';
 
-const cloneTree = (file: FileSystemNode): FileSystemNode => {
-  const children = file.children.map((child) => {
-    if (child.type === FileType.FOLDER) {
-      return cloneTree(child);
-    }
+export interface FolderBuilderProps {
+  defaultHierarchy: FileSystemNode;
+  onChange?: (hierarchy: FileSystemNode) => void;
+}
 
-    return new FileSystemNode(
-      child.name,
-      FileType.FILE,
-      [],
-      child.internalType
-    );
-  });
+export default function FolderBuilder({
+  defaultHierarchy,
+  onChange,
+}: FolderBuilderProps) {
+  const [hierarchy, setHierarchy] = useState<FileSystemNode>(defaultHierarchy);
 
-  return new FileSystemNode(file.name, file.type, children, file.internalType);
-};
-
-const deleteNode = (
-  file: FileSystemNode,
-  nodeToDelete: FileSystemNode
-): FileSystemNode => {
-  const children = file.children
-    .filter((child) => child.id !== nodeToDelete.id)
-    .map((child) => {
-      if (child.type === FileType.FOLDER) {
-        return deleteNode(child, nodeToDelete);
-      }
-
-      return new FileSystemNode(
-        child.name,
-        FileType.FILE,
-        [],
-        child.internalType
-      );
-    });
-
-  return new FileSystemNode(file.name, file.type, children, file.internalType);
-};
-
-const findUsedInternalTypes = (file: FileSystemNode): InternalType[] => {
-  if (file.type === FileType.FOLDER) {
-    const types = new Set<InternalType>([file.internalType]);
-
-    for (const child of file.children) {
-      findUsedInternalTypes(child).forEach((type) => types.add(type));
-    }
-
-    types.delete(InternalType.NORMAL);
-
-    return Array.from(types);
-  }
-
-  if (file.internalType === InternalType.NORMAL) {
-    return [];
-  }
-  return [file.internalType];
-};
-
-const findUnusedInternalTypes = (file: FileSystemNode): InternalType[] => {
-  const used = findUsedInternalTypes(file);
-  return Object.values(InternalType).filter((t) => !used.includes(t));
-};
-
-export default function FolderBuilder() {
-  const [hierarchy, setHierarchy] = useState<FileSystemNode>(
-    new FileSystemNode('src', FileType.FOLDER, [
-      new FileSystemNode('app.module.ts', FileType.FILE, []),
-      new FileSystemNode(
-        'app.component.ts',
-        FileType.FILE,
-        [],
-        InternalType.NORMAL
-      ),
-      new FileSystemNode(
-        'entities',
-        FileType.FOLDER,
-        [],
-        InternalType.ENTITIES
-      ),
-      new FileSystemNode(
-        'module',
-        FileType.FOLDER,
-        [
-          new FileSystemNode(
-            'controller',
-            FileType.FOLDER,
-            [],
-            InternalType.CONTROLLER
-          ),
-          new FileSystemNode(
-            'service',
-            FileType.FOLDER,
-            [],
-            InternalType.SERVICE
-          ),
-        ],
-        InternalType.MODULE
-      ),
-    ])
-  );
-
-  const [opened, { open, close }] = useDisclosure(true);
+  const [opened, { open, close }] = useDisclosure(false);
   const [folder, setFolder] = useState<FileSystemNode>(hierarchy);
   const allowedInternalTypes = useMemo<InternalType[]>(
     () => findUnusedInternalTypes(hierarchy),
@@ -128,12 +43,21 @@ export default function FolderBuilder() {
     folder.type = formResponse.type;
     folder.internalType = formResponse.internalType;
 
-    setHierarchy(cloneTree(hierarchy));
+    setHierarchy((hierarchy) => {
+      const newHierarchy = cloneTree(hierarchy);
+      onChange && onChange(newHierarchy);
+      return newHierarchy;
+    });
+
     close();
   };
 
   const handleDelete = (folder: FileSystemNode) => {
-    setHierarchy(deleteNode(hierarchy, folder));
+    setHierarchy((hierarchy) => {
+      const newHierarchy = deleteNode(hierarchy, folder);
+      onChange && onChange(newHierarchy);
+      return newHierarchy;
+    });
     close();
   };
 
@@ -144,12 +68,17 @@ export default function FolderBuilder() {
     folder.children.push(
       new FileSystemNode(
         formResponse.name,
-        FileType.FOLDER,
+        formResponse.type,
         [],
         formResponse.internalType
       )
     );
-    setHierarchy(cloneTree(hierarchy));
+
+    setHierarchy((hierarchy) => {
+      const newHierarchy = cloneTree(hierarchy);
+      onChange && onChange(newHierarchy);
+      return newHierarchy;
+    });
     close();
   };
 

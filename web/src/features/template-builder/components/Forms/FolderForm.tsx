@@ -1,6 +1,8 @@
+'use client';
+
 import { Button, Select, TextInput } from '@mantine/core';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { FileSystemNode, FileType, InternalType } from '@/lib/model/template';
@@ -43,11 +45,16 @@ export default function FolderForm({
     control,
     reset,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FolderFormData>({
     resolver: yupResolver(templateFormData),
     defaultValues: useMemo(() => templateToForm(file), [name]),
   });
+
+  const [internalTypes, setInternalTypes] =
+    useState<InternalType[]>(allowedInternalTypes);
+  const [showInternalTypes, setShowInternalTypes] = useState(false);
 
   useEffect(() => {
     reset(templateToForm(file));
@@ -57,6 +64,10 @@ export default function FolderForm({
 
   if (file && file.type === FileType.FOLDER && file.children.length > 0) {
     showType = false;
+  }
+
+  if (file && file.type === FileType.FILE) {
+    setShowInternalTypes(true);
   }
 
   return (
@@ -82,30 +93,40 @@ export default function FolderForm({
               placeholder="File / Folder"
               {...field}
               required
+              onChange={(e) => {
+                if (e === 'file') {
+                  setValue('type', FileType.FILE);
+                  setInternalTypes(allowedInternalTypes);
+                  setShowInternalTypes(true);
+                }
+                if (e === 'folder') {
+                  setValue('type', FileType.FOLDER);
+                  setInternalTypes([InternalType.NORMAL]);
+                  setShowInternalTypes(false);
+                }
+              }}
             />
           )}
         />
       )}
 
-      <Controller
-        name="internalType"
-        control={control}
-        render={({ field }) => (
-          <Select
-            searchable
-            data={
-              file && file.internalType !== InternalType.NORMAL
-                ? [file.internalType, ...allowedInternalTypes]
-                : allowedInternalTypes
-            }
-            nothingFoundMessage="Nothing found..."
-            label="Internal Type"
-            placeholder=""
-            {...field}
-            required
-          />
-        )}
-      />
+      {showInternalTypes && (
+        <Controller
+          name="internalType"
+          control={control}
+          render={({ field }) => (
+            <Select
+              searchable
+              data={internalTypes}
+              nothingFoundMessage="Nothing found..."
+              label="Internal Type"
+              placeholder=""
+              {...field}
+              required
+            />
+          )}
+        />
+      )}
 
       <Button type="submit" mt="sm">
         Save

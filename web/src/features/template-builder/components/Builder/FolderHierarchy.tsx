@@ -43,7 +43,7 @@ export const drawFolder = (
             key={child.id}
             title={
               <span className="flex gap-2">
-                {icons[file.internalType]}
+                {icons[child.internalType]}
                 {child.name}
               </span>
             }
