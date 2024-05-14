@@ -1,5 +1,6 @@
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { Schema } from './schema';
 
 export enum FileType {
   FOLDER = 'folder',
@@ -14,6 +15,17 @@ export enum InternalType {
   NORMAL = 'normal',
 }
 
+export class GeneratedContent {
+  constructor(
+    public name: string,
+    public module: string = ''
+  ) {}
+
+  get id() {
+    return `${this.module}.${this.name}`;
+  }
+}
+
 export class FileSystemNode {
   public readonly id: string;
   private _internalType: InternalType;
@@ -22,6 +34,7 @@ export class FileSystemNode {
     public name: string,
     public type: FileType,
     public children: FileSystemNode[],
+    public contents: GeneratedContent[] = [],
     internalType: InternalType = InternalType.NORMAL
   ) {
     this.id = uuidv4();
@@ -63,23 +76,34 @@ export class FileSystemNode {
 }
 
 export class Template {
-  id: string;
-
-  name: string;
-
-  description: string;
-
-  content: string;
-
-  constructor(id: string, name: string, description: string, content: string) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.content = content;
-  }
+  constructor(
+    readonly id: string,
+    public schemas: Schema[],
+    public structure: { [key: string]: string }
+  ) {}
 }
 
 export const fileSystemNodeToJSON = (node: FileSystemNode): any => {
+  const pathMap = {} as { [key: string]: { type: FileType; path: string } };
+
+  const traverse = (node: FileSystemNode, parentLocation: string): any => {
+    const location = path.join(parentLocation, node.name);
+
+    if (node.type === FileType.FOLDER) {
+      node.children.forEach((child) => {
+        traverse(child, location);
+      });
+    }
+
+    pathMap[node.name] = { type: node.type, path: location };
+  };
+
+  traverse(node, '/');
+
+  return pathMap;
+};
+
+export const _fileSystemNodeToJSON = (node: FileSystemNode): any => {
   const dynamicPathMap = {} as { [key: string]: string };
   const staticPathMap = {} as { [key: string]: string };
 

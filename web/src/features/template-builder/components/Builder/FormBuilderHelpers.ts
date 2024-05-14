@@ -1,4 +1,9 @@
-import { FileSystemNode, FileType, InternalType } from '@/lib/model/template';
+import {
+  GeneratedContent,
+  FileSystemNode,
+  FileType,
+  InternalType,
+} from '@/lib/model/template';
 
 export const cloneTree = (file: FileSystemNode): FileSystemNode => {
   const children = file.children.map((child) => {
@@ -10,11 +15,18 @@ export const cloneTree = (file: FileSystemNode): FileSystemNode => {
       child.name,
       FileType.FILE,
       [],
+      child.contents,
       child.internalType
     );
   });
 
-  return new FileSystemNode(file.name, file.type, children, file.internalType);
+  return new FileSystemNode(
+    file.name,
+    file.type,
+    children,
+    file.contents,
+    file.internalType
+  );
 };
 
 export const deleteNode = (
@@ -31,36 +43,46 @@ export const deleteNode = (
       return new FileSystemNode(
         child.name,
         FileType.FILE,
-        [],
+        child.children,
+        child.contents,
         child.internalType
       );
     });
 
-  return new FileSystemNode(file.name, file.type, children, file.internalType);
+  return new FileSystemNode(
+    file.name,
+    file.type,
+    children,
+    file.contents,
+    file.internalType
+  );
 };
 
-export const findUsedInternalTypes = (file: FileSystemNode): InternalType[] => {
+export const findMappedGeneratedContents = (
+  file: FileSystemNode,
+  generated: GeneratedContent[]
+): string[] => {
   if (file.type === FileType.FOLDER) {
-    const types = new Set<InternalType>([file.internalType]);
+    const generatedContent = new Set<string>();
 
     for (const child of file.children) {
-      findUsedInternalTypes(child).forEach((type) => types.add(type));
+      findMappedGeneratedContents(child, generated).forEach(
+        (gid) => generatedContent.add(gid),
+        generated
+      );
     }
 
-    types.delete(InternalType.NORMAL);
-
-    return Array.from(types);
+    return Array.from(generatedContent);
   }
 
-  if (file.internalType === InternalType.NORMAL) {
-    return [];
-  }
-  return [file.internalType];
+  return file.contents.map((g) => g.id);
 };
 
-export const findUnusedInternalTypes = (
-  file: FileSystemNode
-): InternalType[] => {
-  const used = findUsedInternalTypes(file);
-  return Object.values(InternalType).filter((t) => !used.includes(t));
+export const findUnmappedGeneratedContents = (
+  file: FileSystemNode,
+  generated: GeneratedContent[]
+): GeneratedContent[] => {
+  const used = findMappedGeneratedContents(file, generated);
+
+  return generated.filter((g) => !used.includes(g.id));
 };

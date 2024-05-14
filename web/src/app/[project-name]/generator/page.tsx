@@ -1,25 +1,28 @@
 'use client';
 
-import TemplateForm from '@/features/template-builder/components/Forms/TemplateForm';
+import StructureBuilder from '@/features/template-builder/components/Builder/StructureBuilder';
+import { GeneratedContent } from '@/lib/model/template';
 import { Tabs } from '@mantine/core';
 import { useState } from 'react';
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState<string | null>('second');
+  const [activeTab, setActiveTab] = useState<string | null>('new');
 
   return (
     <main className="p-3">
       <Tabs value={activeTab} onChange={setActiveTab}>
         <Tabs.List>
-          <Tabs.Tab value="first">All</Tabs.Tab>
-          <Tabs.Tab value="second">Create new</Tabs.Tab>
+          <Tabs.Tab value="tasks">Tasks</Tabs.Tab>
+          <Tabs.Tab value="new">Generate new</Tabs.Tab>
         </Tabs.List>
 
-        <Tabs.Panel value="first" className="mt-3">
+        <Tabs.Panel value="tasks" className="mt-3">
           test
         </Tabs.Panel>
-        <Tabs.Panel value="second" className="mt-3">
-          <TemplateForm onSubmit={() => {}} />
+        <Tabs.Panel value="new" className="mt-3">
+          <StructureBuilder
+            generated={[new GeneratedContent('TodoEntity', 'todo')]}
+          />
         </Tabs.Panel>
       </Tabs>
       {/* <div className="flex items-center justify-center w-full h-screen outline">

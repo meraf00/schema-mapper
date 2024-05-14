@@ -12,6 +12,7 @@ export interface GeneratorFormProps {
 export interface GenerateCodeFormData {
   schemas: string[];
 }
+
 export default function GeneratorForm({ onSubmit }: GeneratorFormProps) {
   const { data: schemas, isLoading } = useQuery({
     queryKey: [cacheKeys.schemas],
@@ -44,6 +45,7 @@ export default function GeneratorForm({ onSubmit }: GeneratorFormProps) {
           />
         )}
       />
+
       <Button type="submit" mt="sm">
         Generate
       </Button>

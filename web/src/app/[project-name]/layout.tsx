@@ -35,10 +35,10 @@ export default function Layout({
             Schemas
           </TabButton>
           <TabButton
-            isActive={pathname.startsWith('/project/templates')}
-            href="/project/templates"
+            isActive={pathname.startsWith('/project/generator')}
+            href="/project/generator"
           >
-            Templates
+            Code Generator
           </TabButton>
         </div>
       </nav>

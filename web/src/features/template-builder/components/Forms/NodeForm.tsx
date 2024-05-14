@@ -1,73 +1,75 @@
 'use client';
 
-import { Button, Select, TextInput } from '@mantine/core';
+import { Button, MultiSelect, Select, TextInput } from '@mantine/core';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useEffect, useMemo, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { FileSystemNode, FileType, InternalType } from '@/lib/model/template';
+import {
+  GeneratedContent,
+  FileSystemNode,
+  FileType,
+} from '@/lib/model/template';
 
-export interface FolderFormProps {
-  file?: FileSystemNode;
-  allowedInternalTypes: InternalType[];
-  onSubmit: SubmitHandler<FolderFormData>;
+export interface NodeFormProps {
+  node?: FileSystemNode;
+  defaultContents?: GeneratedContent[];
+  onSubmit: SubmitHandler<NodeFormData>;
 }
 
-export type FolderFormData = {
+export type NodeFormData = {
   name: string;
   type: FileType;
-  internalType: InternalType;
+  contents: string[];
 };
 
 const templateFormData = yup
   .object({
     name: yup.string().required(),
     type: yup.mixed<FileType>().oneOf(Object.values(FileType)).required(),
-    internalType: yup
-      .mixed<InternalType>()
-      .oneOf(Object.values(InternalType))
-      .required(),
+    contents: yup.array().of(yup.string().required()).required(),
   })
   .required();
 
-const templateToForm = (file: FileSystemNode | undefined): FolderFormData => ({
-  name: file?.name ?? '',
-  type: file?.type ?? FileType.FOLDER,
-  internalType: file?.internalType ?? InternalType.NORMAL,
+const templateToForm = (node: FileSystemNode | undefined): NodeFormData => ({
+  name: node?.name ?? '',
+  type: node?.type ?? FileType.FOLDER,
+  contents: node?.contents.map((c) => c.id) ?? [],
 });
 
-export default function FolderForm({
-  file,
-  allowedInternalTypes,
+export default function NodeForm({
+  node,
+  defaultContents,
   onSubmit,
-}: FolderFormProps) {
+}: NodeFormProps) {
   const {
     control,
     reset,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<FolderFormData>({
+  } = useForm<NodeFormData>({
     resolver: yupResolver(templateFormData),
-    defaultValues: useMemo(() => templateToForm(file), [name]),
+    defaultValues: useMemo(() => templateToForm(node), [node]),
   });
 
-  const [internalTypes, setInternalTypes] =
-    useState<InternalType[]>(allowedInternalTypes);
-  const [showInternalTypes, setShowInternalTypes] = useState(false);
+  const [contents, setContents] = useState<GeneratedContent[]>(
+    defaultContents ?? []
+  );
+  const [showContents, setShowContents] = useState(false);
 
   useEffect(() => {
-    reset(templateToForm(file));
-  }, [file]);
+    reset(templateToForm(node));
+  }, [node, reset]);
 
   let showType = true;
 
-  if (file && file.type === FileType.FOLDER && file.children.length > 0) {
+  if (node && node.type === FileType.FOLDER && node.children.length > 0) {
     showType = false;
   }
 
-  if (file && file.type === FileType.FILE) {
-    setShowInternalTypes(true);
+  if (node && node.type === FileType.FILE) {
+    setShowContents(true);
   }
 
   return (
@@ -96,13 +98,11 @@ export default function FolderForm({
               onChange={(e) => {
                 if (e === 'file') {
                   setValue('type', FileType.FILE);
-                  setInternalTypes(allowedInternalTypes);
-                  setShowInternalTypes(true);
+                  setShowContents(true);
                 }
                 if (e === 'folder') {
                   setValue('type', FileType.FOLDER);
-                  setInternalTypes([InternalType.NORMAL]);
-                  setShowInternalTypes(false);
+                  setShowContents(false);
                 }
               }}
             />
@@ -110,16 +110,18 @@ export default function FolderForm({
         />
       )}
 
-      {showInternalTypes && (
+      {showContents && (
         <Controller
-          name="internalType"
+          name="contents"
           control={control}
           render={({ field }) => (
-            <Select
+            <MultiSelect
               searchable
-              data={internalTypes}
+              data={
+                contents?.map((c) => ({ value: c.id, label: c.name })) ?? []
+              }
               nothingFoundMessage="Nothing found..."
-              label="Internal Type"
+              label="Content"
               placeholder=""
               {...field}
               required
