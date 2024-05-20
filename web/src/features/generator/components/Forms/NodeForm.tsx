@@ -47,6 +47,7 @@ export default function NodeForm({
     reset,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<NodeFormData>({
     resolver: yupResolver(templateFormData),
@@ -60,7 +61,25 @@ export default function NodeForm({
 
   useEffect(() => {
     reset(templateToForm(node));
-  }, [node, reset]);
+
+    if (node && node.type === FileType.FILE) {
+      setContents((contents) => {
+        const shouldAdd: GeneratedContent[] = [];
+        const currContent = getValues()['contents'];
+
+        currContent.forEach(
+          (c) =>
+            !contents.find((cnt) => cnt.id === c) &&
+            shouldAdd.push(
+              new GeneratedContent(c.split('.')[1], c.split('.')[0])
+            )
+        );
+        return [...contents, ...shouldAdd];
+      });
+
+      setShowContents(true);
+    }
+  }, [node, reset, getValues]);
 
   let showType = true;
 
@@ -68,9 +87,7 @@ export default function NodeForm({
     showType = false;
   }
 
-  if (node && node.type === FileType.FILE) {
-    setShowContents(true);
-  }
+  console.log(contents, defaultContents);
 
   return (
     <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>

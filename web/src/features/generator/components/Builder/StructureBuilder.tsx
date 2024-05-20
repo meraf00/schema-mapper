@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Modal, Tabs } from '@mantine/core';
+import { Button, Modal, Spoiler, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import React, { useEffect, useMemo, useState } from 'react';
 import NodeForm, { NodeFormData } from '../Forms/NodeForm';
@@ -21,17 +21,18 @@ import { CodeHighlight } from '@mantine/code-highlight';
 import * as prettier from 'prettier';
 import parserBabel from 'prettier/plugins/babel';
 import * as prettierPluginEstree from 'prettier/plugins/estree';
+import { IconCircle } from '@tabler/icons-react';
 
-export interface FolderBuilderProps {
+export interface StructureBuilderProps {
   generated: GeneratedContent[];
   template?: Template;
   onChange?: (structure: { [key: string]: string }) => void;
 }
 
-export default function FolderBuilder({
+export default function StructureBuilder({
   generated,
   onChange,
-}: FolderBuilderProps) {
+}: StructureBuilderProps) {
   const [hierarchy, setHierarchy] = useState<FileSystemNode>(
     new FileSystemNode('src', FileType.FOLDER, [])
   );
@@ -43,11 +44,15 @@ export default function FolderBuilder({
     [hierarchy, generated]
   );
 
-  const [activeTab, setActiveTab] = useState<string | null>('first');
+  const [activeTab, setActiveTab] = useState<'edit' | 'create'>('edit');
   const [code, setCode] = useState<string>('');
 
   useEffect(() => {
-    const content = JSON.stringify(fileSystemNodeToJSON(hierarchy), null, 2);
+    const [pathMap, paths] = fileSystemNodeToJSON(hierarchy);
+    const content =
+      JSON.stringify(pathMap, null, 2) +
+      '\n\n' +
+      paths.map((p) => `[${p.type}] ${p.path}`).join('\n');
     const fn = async () => {
       try {
         const formatted = await prettier.format(content, {
@@ -64,9 +69,12 @@ export default function FolderBuilder({
     fn();
   }, [hierarchy]);
 
-  const handleRightClick = (e: any, node: FileSystemNode) => {
+  const handleRightClick = (e: any, currNode: FileSystemNode) => {
     e.preventDefault();
-    setNode(node);
+    setNode(currNode);
+    if (currNode.type === FileType.FILE) {
+      setActiveTab('edit');
+    }
     open();
   };
 
@@ -74,7 +82,7 @@ export default function FolderBuilder({
     node.name = formResponse.name;
     node.type = formResponse.type;
     node.contents = formResponse.contents.map(
-      (name) => new GeneratedContent(name)
+      (id) => new GeneratedContent(id.split('.')[1], id.split('.')[0])
     );
 
     setHierarchy((hierarchy) => {
@@ -99,7 +107,9 @@ export default function FolderBuilder({
         formResponse.name,
         formResponse.type,
         [],
-        formResponse.contents.map((name) => new GeneratedContent(name))
+        formResponse.contents.map(
+          (name) => new GeneratedContent(name.split('.')[1], name.split('.')[0])
+        )
       )
     );
 
@@ -123,6 +133,7 @@ export default function FolderBuilder({
     <div className="flex gap-3 w-full">
       <div className="flex flex-col gap-3 w-1/2">
         <div className="bg-slate-50 bg-opacity-70 p-3">
+          <h2 className="text-lg font-bold">Specify Structure</h2>
           <Modal
             opened={opened}
             onClose={close}
@@ -132,15 +143,20 @@ export default function FolderBuilder({
               blur: 3,
             }}
           >
-            <Tabs value={activeTab} onChange={setActiveTab}>
+            <Tabs
+              value={activeTab}
+              onChange={(value) =>
+                setActiveTab((value as 'edit' | 'create') ?? 'edit')
+              }
+            >
               <Tabs.List>
-                <Tabs.Tab value="first">Edit</Tabs.Tab>
+                <Tabs.Tab value="edit">Edit</Tabs.Tab>
                 {node.type === FileType.FOLDER && (
-                  <Tabs.Tab value="second">Create</Tabs.Tab>
+                  <Tabs.Tab value="create">Create</Tabs.Tab>
                 )}
               </Tabs.List>
 
-              <Tabs.Panel value="first" className="mt-3">
+              <Tabs.Panel value="edit" className="mt-3">
                 <div className="flex flex-col gap-5">
                   <NodeForm
                     node={node}
@@ -156,7 +172,7 @@ export default function FolderBuilder({
                   )}
                 </div>
               </Tabs.Panel>
-              <Tabs.Panel value="second" className="mt-3">
+              <Tabs.Panel value="create" className="mt-3">
                 <NodeForm
                   defaultContents={contents}
                   onSubmit={(formResponse) => {
@@ -171,13 +187,28 @@ export default function FolderBuilder({
         </div>
       </div>
 
-      <div className="flex w-1/2">
-        <CodeHighlight
-          className="w-full"
-          code={code}
-          language="json"
-          withCopyButton={false}
-        />
+      <div className="flex flex-col w-1/2">
+        <div className="bg-slate-50 bg-opacity-70 p-3">
+          <h2 className="text-lg font-bold">Generated Contents</h2>
+
+          <div>
+            {contents.map((g) => (
+              <div key={g.id} className="flex items-center gap-3">
+                <IconCircle size={8} className="mr-3 ml-1" />{' '}
+                <span>{g.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Spoiler maxHeight={120} showLabel="Show more" hideLabel="Hide">
+          <CodeHighlight
+            className="w-full"
+            code={code}
+            language="json"
+            withCopyButton={false}
+          />
+        </Spoiler>
       </div>
     </div>
   );

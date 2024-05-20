@@ -99,7 +99,7 @@ export default function AttributeForm({
   useEffect(() => {
     reset(attributeToForm(attribute));
     setIsForeign(attribute?.isForeign ?? false);
-  }, [attribute]);
+  }, [attribute, reset]);
 
   return (
     <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>

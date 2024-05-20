@@ -1,6 +1,7 @@
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { Schema } from './schema';
+import { Case } from 'change-case-all';
 
 export enum FileType {
   FOLDER = 'folder',
@@ -12,6 +13,7 @@ export enum InternalType {
   CONTROLLER = 'controller',
   SERVICE = 'service',
   ENTITIES = 'entity',
+  DTO = 'dto',
   NORMAL = 'normal',
 }
 
@@ -83,11 +85,22 @@ export class Template {
   ) {}
 }
 
-export const fileSystemNodeToJSON = (node: FileSystemNode): any => {
+export const fileSystemNodeToJSON = (
+  node: FileSystemNode
+): [
+  { [key: string]: { type: FileType; path: string } },
+  { type: FileType; path: string }[],
+] => {
   const pathMap = {} as { [key: string]: { type: FileType; path: string } };
+  const paths = [] as { type: FileType; path: string }[];
 
   const traverse = (node: FileSystemNode, parentLocation: string): any => {
     const location = path.join(parentLocation, node.name);
+
+    paths.push({
+      type: node.type,
+      path: location,
+    });
 
     if (node.type === FileType.FOLDER) {
       node.children.forEach((child) => {
@@ -95,12 +108,14 @@ export const fileSystemNodeToJSON = (node: FileSystemNode): any => {
       });
     }
 
-    pathMap[node.name] = { type: node.type, path: location };
+    for (const content of node.contents) {
+      pathMap[content.id] = { type: node.type, path: location };
+    }
   };
 
   traverse(node, '/');
 
-  return pathMap;
+  return [pathMap, paths];
 };
 
 export const _fileSystemNodeToJSON = (node: FileSystemNode): any => {
@@ -139,4 +154,40 @@ export const _fileSystemNodeToJSON = (node: FileSystemNode): any => {
   traverse(node, '/', 'static');
 
   return pathMap;
+};
+
+export const getGeneratedContents = (schemas: Schema[]) => {
+  const contents: GeneratedContent[] = [new GeneratedContent('AppModule', '')];
+
+  schemas.forEach((schema) => {
+    const moduleName = Case.pascal(schema.name);
+
+    contents.push(new GeneratedContent(moduleName + 'Module', moduleName));
+
+    schema.tables.forEach((table) => {
+      contents.push(
+        new GeneratedContent(Case.pascal(table.name + 'Entity'), moduleName)
+      );
+
+      if (table.isAggregate) {
+        contents.push(
+          new GeneratedContent(
+            Case.pascal('Create' + table.name + 'Dto'),
+            moduleName
+          ),
+          new GeneratedContent(
+            Case.pascal('Update' + table.name + 'Dto'),
+            moduleName
+          ),
+          new GeneratedContent(Case.pascal(table.name + 'Service'), moduleName),
+          new GeneratedContent(
+            Case.pascal(table.name + 'Controller'),
+            moduleName
+          )
+        );
+      }
+    });
+  });
+
+  return contents;
 };

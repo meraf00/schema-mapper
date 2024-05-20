@@ -2,22 +2,11 @@ import {
   GeneratedContent,
   FileSystemNode,
   FileType,
-  InternalType,
 } from '@/lib/model/template';
 
 export const cloneTree = (file: FileSystemNode): FileSystemNode => {
   const children = file.children.map((child) => {
-    if (child.type === FileType.FOLDER) {
-      return cloneTree(child);
-    }
-
-    return new FileSystemNode(
-      child.name,
-      FileType.FILE,
-      [],
-      child.contents,
-      child.internalType
-    );
+    return cloneTree(child);
   });
 
   return new FileSystemNode(
