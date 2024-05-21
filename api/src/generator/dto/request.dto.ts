@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsObject, IsString } from 'class-validator';
 
 export class GenerateCodeDto {
   @ApiProperty({ type: 'string', format: 'uuid', isArray: true })
@@ -8,9 +8,20 @@ export class GenerateCodeDto {
   schemas: string[];
 
   @ApiProperty({ type: 'string' })
-  @IsNotEmpty()
-  @IsString()
-  template: string;
+  @IsObject()
+  pathMap: {
+    [key: string]: {
+      type: string;
+      path: string;
+    };
+  };
+
+  @ApiProperty({ type: 'object', isArray: true })
+  @IsArray()
+  paths: {
+    type: string;
+    path: string;
+  }[];
 }
 
 export class CreateTemplateDto {
