@@ -87,8 +87,6 @@ export default function NodeForm({
     showType = false;
   }
 
-  console.log(contents, defaultContents);
-
   return (
     <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
       <Controller

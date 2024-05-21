@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Modal, Spoiler, Tabs } from '@mantine/core';
+import { Button, Group, Modal, Spoiler, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import React, { useEffect, useMemo, useState } from 'react';
 import NodeForm, { NodeFormData } from '../Forms/NodeForm';
@@ -26,12 +26,23 @@ import { IconCircle } from '@tabler/icons-react';
 export interface StructureBuilderProps {
   generated: GeneratedContent[];
   template?: Template;
-  onChange?: (structure: { [key: string]: string }) => void;
+  onSubmit?: (
+    pathMap: {
+      [key: string]: {
+        type: FileType;
+        path: string;
+      };
+    },
+    paths: { path: string; type: FileType }[]
+  ) => void;
+
+  prevStep?: () => void;
 }
 
 export default function StructureBuilder({
   generated,
-  onChange,
+  onSubmit,
+  prevStep,
 }: StructureBuilderProps) {
   const [hierarchy, setHierarchy] = useState<FileSystemNode>(
     new FileSystemNode('src', FileType.FOLDER, [])
@@ -120,6 +131,13 @@ export default function StructureBuilder({
     close();
   };
 
+  const handleSubmit = () => {
+    const [pathMap, paths] = fileSystemNodeToJSON(hierarchy);
+    if (onSubmit) {
+      onSubmit(pathMap, paths);
+    }
+  };
+
   let showDelete = true;
 
   if (
@@ -185,6 +203,16 @@ export default function StructureBuilder({
 
           {drawFolder(hierarchy, handleRightClick)}
         </div>
+
+        <Group justify="center" mt="xl">
+          <Button variant="default" onClick={prevStep}>
+            Back
+          </Button>
+
+          <Button onClick={handleSubmit} disabled={contents.length !== 0}>
+            Generate!
+          </Button>
+        </Group>
       </div>
 
       <div className="flex flex-col w-1/2">

@@ -126,8 +126,21 @@ export const deleteSchema = async (id: string) => {
   return response.data;
 };
 
-export const generateCode = async (schemaIds: string[]) => {
-  const response = await instance.post(`generator`, { schemas: schemaIds });
+
+export const createGenerateCodeTask = async (
+  schemaIds: string[],
+  pathMap: {
+    [key: string]: { type: string; path: string };
+  },
+  paths: { type: string; path: string }[]
+) => {
+  console.log(pathMap, schemaIds, paths);
+  const response = await instance.post(`generator`, {
+    schemas: schemaIds,
+    pathMap,
+    paths,
+  });
+  
   return response.data;
 };
 

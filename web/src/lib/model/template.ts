@@ -157,7 +157,9 @@ export const _fileSystemNodeToJSON = (node: FileSystemNode): any => {
 };
 
 export const getGeneratedContents = (schemas: Schema[]) => {
-  const contents: GeneratedContent[] = [new GeneratedContent('AppModule', '')];
+  const contents: GeneratedContent[] = [
+    new GeneratedContent('AppModule', 'App'),
+  ];
 
   schemas.forEach((schema) => {
     const moduleName = Case.pascal(schema.name);

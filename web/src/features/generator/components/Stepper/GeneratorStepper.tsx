@@ -1,12 +1,17 @@
+'use client';
 import { useState } from 'react';
-import { Stepper, Button, Group } from '@mantine/core';
-import GeneratorForm, {
-  GenerateCodeFormData,
-} from '@/features/schema-builder/components/Forms/GeneratorForm';
+import { Stepper } from '@mantine/core';
+import GeneratorForm from '@/features/schema-builder/components/Forms/GeneratorForm';
 import StructureBuilder from '../Builder/StructureBuilder';
-import { GeneratedContent, getGeneratedContents } from '@/lib/model/template';
+import {
+  FileType,
+  GeneratedContent,
+  getGeneratedContents,
+} from '@/lib/model/template';
 import { notifications } from '@mantine/notifications';
 import { Schema } from '@/lib/model/schema';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { cacheKeys, createGenerateCodeTask } from '@/api';
 
 export function GeneratorStepper() {
   const [active, setActive] = useState(0);
@@ -19,7 +24,24 @@ export function GeneratorStepper() {
     GeneratedContent[]
   >([]);
 
-  const handleGeneratorSubmit = (schemas: Schema[]) => {
+  const [schemaIds, setSchemaIds] = useState<string[]>([]);
+
+  const queryClient = useQueryClient();
+
+  const generateCodeMutation = useMutation({
+    mutationFn: (data: any) => {
+      return createGenerateCodeTask(data.schemas, data.pathMaps, data.paths);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [cacheKeys.tasks] });
+      notifications.show({
+        title: 'Success',
+        message: 'Code generation task added successfully',
+      });
+    },
+  });
+
+  const handleSchemaSelect = (schemas: Schema[]) => {
     if (schemas?.length === 0) {
       return notifications.show({
         title: 'Error',
@@ -29,11 +51,31 @@ export function GeneratorStepper() {
     }
 
     setGeneratedContents(getGeneratedContents(schemas));
+    setSchemaIds(schemas.map((schema) => schema.id));
 
     nextStep();
   };
 
-  console.log(generatedContents);
+  const handleGenerate = (
+    pathMap: {
+      [key: string]: {
+        type: FileType;
+        path: string;
+      };
+    },
+    paths: {
+      type: FileType;
+      path: string;
+    }[]
+  ) => {
+    generateCodeMutation.mutate({
+      schemas: schemaIds,
+      pathMaps: pathMap,
+      paths,
+    });
+
+    console.log(schemaIds);
+  };
 
   return (
     <div className="py-5 w-full">
@@ -53,26 +95,18 @@ export function GeneratorStepper() {
 
       {active === 0 && (
         <div className="w-full flex justify-center my-10">
-          <GeneratorForm onSubmit={handleGeneratorSubmit} />
+          <GeneratorForm onSubmit={handleSchemaSelect} />
         </div>
       )}
       {active === 1 && (
         <div className="w-full my-10">
-          <StructureBuilder generated={generatedContents} />
+          <StructureBuilder
+            generated={generatedContents}
+            prevStep={prevStep}
+            onSubmit={handleGenerate}
+          />
         </div>
       )}
-
-      <Group justify="center" mt="xl">
-        {active === 1 && (
-          <>
-            <Button variant="default" onClick={prevStep}>
-              Back
-            </Button>
-
-            <Button onClick={nextStep}>Generate!</Button>
-          </>
-        )}
-      </Group>
     </div>
   );
 }

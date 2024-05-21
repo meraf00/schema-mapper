@@ -40,7 +40,7 @@ export default function GenerateCodePage() {
     <div className="flex flex-col gap-10 mb-10">
       <div>
         <h1 className="font-bold text-xl pb-3 pt-1">Generate Code</h1>
-        <GeneratorForm onSubmit={handleGenerateCode} />
+        {/* <GeneratorForm onSubmit={handleGenerateCode} /> */}
       </div>
 
       <div>
