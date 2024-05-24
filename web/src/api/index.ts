@@ -43,8 +43,8 @@ export const getSchema = async (id: string) => {
   return response.data;
 };
 
-export const getSchemas = async () => {
-  const response = await instance.get('schemas');
+export const getSchemas = async (projectStub: string) => {
+  const response = await instance.get(`schemas?projectStub=${projectStub}`);
   return response.data;
 };
 

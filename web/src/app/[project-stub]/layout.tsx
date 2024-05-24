@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 const metadata: Metadata = {
   title: 'Schema Map',
-  description: 'Generated typeorm from ER',
+  description: 'Generate Functioning NestJS Server!',
 };
 
 export default function Layout({
@@ -24,7 +24,7 @@ export default function Layout({
       <nav className="flex items-center text-sm bg-blue-500 p-0 justify-between sticky top-0 z-30">
         <Link href="/project/schemas">
           <h1 className="text-xl text-white font-bold px-2">
-            {Case.title((params['project-name'] as string) || '')}
+            {Case.title((params['project-stub'] as string) || '')}
           </h1>
         </Link>
         <div className="flex mt-2 gap-3 pb-0">
