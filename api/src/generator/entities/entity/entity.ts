@@ -29,23 +29,29 @@ export class Entity implements Importable {
       .forEach((attribute) => {
         const backref = new BackRef(attribute);
         this.attributes.push(backref);
-        this.dependency.push(...backref.dependency);
+        this.dependency.push(
+          ...backref.dependency.filter((dep) => !(dep.name === this.name)),
+        );
       });
 
     this.dependency.push(
       ...[
         new TypeOrmEntity(),
 
-        ...this.attributes.flatMap((attribute) =>
-          attribute.dependency.map((dep) => {
-            // Entity should only reference other entity with in the same module
-            // So we can resolve modules of referenced tables as such
-            if (dep.module === null) {
-              dep.module = this.module;
-            }
-            return dep;
-          }),
-        ),
+        ...this.attributes
+          .flatMap((attribute) =>
+            attribute.dependency.map((dep) => {
+              // Entity should only reference other entity with in the same module
+              // So we can resolve modules of referenced tables as such
+              if (dep.module === null) {
+                dep.module = this.module;
+              }
+              return dep;
+            }),
+          )
+          .filter(
+            (dep) => !(dep.module === this.module && dep.name === this.name),
+          ),
       ],
     );
   }
