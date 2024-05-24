@@ -29,7 +29,7 @@ export class GeneratorWorker {
 
   @OnQueueCompleted()
   onCompleted(job: Job) {
-    console.log(`Job completed with result`);
+    console.log(`Job completed successfully!`);
     this.websocket.sendToAll(job);
   }
 }

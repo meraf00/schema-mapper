@@ -130,8 +130,6 @@ export class CodeGeneratorService {
       const importable = queue.shift();
       sorted.push(importable);
 
-      console.log(importable.name);
-
       for (const node of graph[importable.name]) {
         if (this.resolvePath(node, pathMap) == filePath) {
           inDegree[node.name] -= 1;
