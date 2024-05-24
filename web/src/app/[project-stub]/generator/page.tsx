@@ -2,6 +2,7 @@
 
 import StructureBuilder from '@/features/generator/components/Builder/StructureBuilder';
 import { GeneratorStepper } from '@/features/generator/components/Stepper/GeneratorStepper';
+import { TaskList } from '@/features/schema-builder/components/TaskList';
 import { GeneratedContent } from '@/lib/model/template';
 import { Tabs } from '@mantine/core';
 import { useState } from 'react';
@@ -18,9 +19,7 @@ export default function Page() {
         </Tabs.List>
 
         <Tabs.Panel value="tasks" className="mt-3">
-          <StructureBuilder
-            generated={[new GeneratedContent('TodoEntity', 'todo')]}
-          />
+          <TaskList />
         </Tabs.Panel>
         <Tabs.Panel value="new" className="mt-3">
           <GeneratorStepper />

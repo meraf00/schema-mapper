@@ -1,4 +1,4 @@
-import { Attribute, RelationType } from 'src/schema/entities';
+import { Attribute, RelationType } from 'src/project/entities';
 import { TypeOrmOneToMany, TypeOrmOneToOne } from '../dependency';
 import { Importable } from '../dependency';
 import {

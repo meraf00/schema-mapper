@@ -1,4 +1,8 @@
-import { Attribute, RelationType, mapAttributeType } from 'src/schema/entities';
+import {
+  Attribute,
+  RelationType,
+  mapAttributeType,
+} from 'src/project/entities';
 import {
   TypeOrmColumn,
   TypeOrmGeneratedColumn,

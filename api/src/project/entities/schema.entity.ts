@@ -1,7 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Table } from './table.entity';
+import { Project } from './project.entity';
 
-@Entity()
+@Entity({ name: 'schemas' })
 export class Schema {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -11,4 +19,13 @@ export class Schema {
 
   @OneToMany(() => Table, (table) => table.schema, { onDelete: 'CASCADE' })
   tables: Table[];
+
+  @Column()
+  projectStub: string;
+
+  @ManyToOne(() => Project, (project) => project.schemas, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'projectStub' })
+  project: Project;
 }

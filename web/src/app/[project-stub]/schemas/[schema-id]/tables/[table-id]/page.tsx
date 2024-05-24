@@ -101,9 +101,9 @@ export default function TablePage() {
       isPrimary: data.isPrimary === 'true',
       isForeign: data.isForeign === 'true',
       isGenerated: data.isGenerated === 'true',
-      relationType: data.relationType,
-      references: data.references,
-      backref: data.backref,
+      relationType: data.relationType ?? undefined,
+      references: data.references ?? undefined,
+      backref: data.backref ?? undefined,
     });
   };
 

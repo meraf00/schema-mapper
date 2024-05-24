@@ -2,7 +2,7 @@ import {
   Attribute,
   AttributeType,
   mapAttributeType,
-} from 'src/schema/entities';
+} from 'src/project/entities';
 import { Importable } from '../dependency';
 import {
   ValidatorIsBoolean,

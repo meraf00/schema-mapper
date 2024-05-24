@@ -65,6 +65,7 @@ export default function AttributePage() {
   });
 
   const handleAttributeUpdate = (data: AttributeFormData) => {
+    console.log(data);
     updateAttributeMutation.mutate({
       id: params['attribute-id'] as string,
       attribute: {
@@ -75,9 +76,9 @@ export default function AttributePage() {
         isPrimary: data.isPrimary === 'true',
         isForeign: data.isForeign === 'true',
         isGenerated: data.isGenerated === 'true',
-        relationType: data.relationType,
-        references: data.references,
-        backref: data.backref,
+        relationType: data.relationType ?? undefined,
+        references: data.references ?? undefined,
+        backref: data.backref ?? undefined,
       },
     });
   };

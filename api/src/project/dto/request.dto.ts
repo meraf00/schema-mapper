@@ -8,10 +8,26 @@ import {
   ValidateIf,
 } from 'class-validator';
 
+export class CreateProjectDto {
+  @ApiProperty()
+  @IsString()
+  name: string;
+}
+
+export class UpdateProjectDto {
+  @ApiProperty()
+  @IsString()
+  name: string;
+}
+
 export class CreateSchemaDto {
   @ApiProperty()
   @IsString()
   name: string;
+
+  @ApiProperty()
+  @IsString()
+  projectStub: string;
 }
 
 export class UpdateSchemaDto {

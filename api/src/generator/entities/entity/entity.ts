@@ -1,4 +1,4 @@
-import { Attribute, Table } from 'src/schema/entities';
+import { Attribute, Table } from 'src/project/entities';
 import { AttributeCode } from './attribute';
 import { entityNameTemplate, entityTemplate } from './entity.template';
 import { Importable, TypeOrmEntity } from '../dependency';

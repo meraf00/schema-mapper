@@ -6,6 +6,7 @@ import { cacheKeys, getSchemas } from '@/api';
 import { Schema } from '@/lib/model/schema';
 
 export interface GeneratorFormProps {
+  projectStub: string;
   onSubmit: (schemas: Schema[]) => void;
 }
 
@@ -13,10 +14,13 @@ export interface GenerateCodeFormData {
   schemas: string[];
 }
 
-export default function GeneratorForm({ onSubmit }: GeneratorFormProps) {
+export default function GeneratorForm({
+  projectStub,
+  onSubmit,
+}: GeneratorFormProps) {
   const { data: schemas, isLoading } = useQuery({
     queryKey: [cacheKeys.schemas],
-    queryFn: getSchemas,
+    queryFn: () => getSchemas(projectStub),
   });
 
   const { control, handleSubmit } = useForm<GenerateCodeFormData>();

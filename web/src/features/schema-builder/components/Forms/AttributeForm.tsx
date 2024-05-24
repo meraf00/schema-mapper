@@ -22,10 +22,10 @@ export type AttributeFormData = {
   isPrimary?: Boolean;
   isForeign?: Boolean;
   isGenerated?: Boolean;
-  relationType?: RelationType;
-  references?: string;
-  backref?: string;
-  referencedTable?: string;
+  relationType?: RelationType | null;
+  references?: string | null;
+  backref?: string | null;
+  referencedTable?: string | null;
 };
 
 const attributeFormData = yup
@@ -40,10 +40,13 @@ const attributeFormData = yup
     isPrimary: yup.mixed<Boolean>().oneOf(['true', 'false']),
     isForeign: yup.mixed<Boolean>().oneOf(['true', 'false']),
     isGenerated: yup.mixed<Boolean>().oneOf(['true', 'false']),
-    relationType: yup.mixed<RelationType>().oneOf(Object.values(RelationType)),
-    references: yup.string(),
-    backref: yup.string(),
-    referencedTable: yup.string(),
+    relationType: yup
+      .mixed<RelationType>()
+      .oneOf(Object.values(RelationType))
+      .nullable(),
+    references: yup.string().nullable(),
+    backref: yup.string().nullable(),
+    referencedTable: yup.string().nullable(),
   })
   .required();
 
@@ -57,10 +60,10 @@ const attributeToForm = (
   isPrimary: attribute?.isPrimary ? 'true' : 'false',
   isForeign: attribute?.isForeign ? 'true' : 'false',
   isGenerated: attribute?.isGenerated ? 'true' : 'false',
-  relationType: attribute?.relationType,
-  references: attribute?.references?.id,
-  backref: attribute?.backref,
-  referencedTable: attribute?.references?.tableId,
+  relationType: attribute?.relationType ?? undefined,
+  references: attribute?.references?.id ?? undefined,
+  backref: attribute?.backref ?? undefined,
+  referencedTable: attribute?.references?.tableId ?? undefined,
 });
 
 export default function AttributeForm({
@@ -76,9 +79,11 @@ export default function AttributeForm({
     getValues,
     formState: { errors },
   } = useForm<AttributeFormData>({
-    resolver: yupResolver(attributeFormData),
+    resolver: yupResolver<AttributeFormData>(attributeFormData),
     defaultValues: useMemo(() => attributeToForm(attribute), [attribute]),
   });
+
+  console.log(errors);
 
   const [isForeign, setIsForeign] = useState(false);
 
@@ -187,7 +192,7 @@ export default function AttributeForm({
           <Controller
             name="backref"
             control={control}
-            render={({ field }) => (
+            render={({ field }: any) => (
               <TextInput label="Backref" placeholder="Backref" {...field} />
             )}
           />

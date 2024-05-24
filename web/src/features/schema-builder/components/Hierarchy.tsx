@@ -17,9 +17,9 @@ export interface HierarchyProps {
 }
 
 export const Hierarchy = ({ schemas }: HierarchyProps) => {
-  const path = '/project/schemas';
   const router = useRouter();
   const params = useParams();
+  const path = `/${params['project-stub']}/schemas`;
 
   let active = null;
 

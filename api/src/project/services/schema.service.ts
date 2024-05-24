@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Schema } from '../entities/schema.entity';
 import { Repository } from 'typeorm';
-import { SchemaNotFoundException } from '../exceptions/exceptions';
 import { CreateSchemaDto, UpdateSchemaDto } from '../dto/request.dto';
 
 @Injectable()
@@ -13,12 +12,16 @@ export class SchemaService {
   ) {}
 
   async create(createSchemaDto: CreateSchemaDto): Promise<Schema> {
-    const schema = this.schemaRepository.create(createSchemaDto);
+    const schema = this.schemaRepository.create({
+      name: createSchemaDto.name,
+      projectStub: createSchemaDto.projectStub,
+    });
     return this.schemaRepository.save(schema);
   }
 
-  async findAll(): Promise<Schema[]> {
+  async findAll(projectStub?: string): Promise<Schema[]> {
     return this.schemaRepository.find({
+      where: projectStub ? { projectStub } : undefined,
       relations: ['tables', 'tables.attributes'],
     });
   }

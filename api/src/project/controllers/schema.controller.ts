@@ -8,10 +8,11 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { SchemaService } from '../services/schema.service';
 import { CreateSchemaDto, UpdateSchemaDto } from '../dto/request.dto';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('schemas')
 @Controller('schemas')
@@ -23,9 +24,15 @@ export class SchemaController {
     return this.schemaService.create(createSchemaDto);
   }
 
+  @ApiQuery({
+    name: 'projectStub',
+    type: String,
+    description: 'Unique project identifier',
+    required: false,
+  })
   @Get()
-  async findAll() {
-    return this.schemaService.findAll();
+  async findAll(@Query('projectStub') projectStub: string) {
+    return this.schemaService.findAll(projectStub);
   }
 
   @ApiParam({

@@ -10,7 +10,7 @@ import { Table } from './table.entity';
 import { AttributeType } from './enums';
 import { RelationType } from './enums';
 
-@Entity({ name: 'attribute' })
+@Entity({ name: 'attributes' })
 @Unique(['name', 'tableId'])
 export class Attribute {
   @PrimaryGeneratedColumn('uuid')

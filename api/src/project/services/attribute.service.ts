@@ -20,8 +20,20 @@ export class AttributeService {
     const attribute = this.attributeRepository.create();
     attribute.name = createAttributeDto.name;
     attribute.table = { id: createAttributeDto.tableId } as Table;
+
     if (createAttributeDto.references) {
       attribute.references = { id: createAttributeDto.references } as Attribute;
+
+      try {
+        attribute.relationType = this.utilityService.enumFromValue(
+          createAttributeDto.relationType.toLocaleUpperCase(),
+          RelationType,
+        );
+      } catch (e) {
+        throw new InvalidAttributeTypeException(
+          createAttributeDto.relationType,
+        );
+      }
     }
 
     try {
@@ -31,15 +43,6 @@ export class AttributeService {
       );
     } catch (e) {
       throw new InvalidAttributeTypeException(createAttributeDto.type);
-    }
-
-    try {
-      attribute.relationType = this.utilityService.enumFromValue(
-        createAttributeDto.relationType.toLocaleUpperCase(),
-        RelationType,
-      );
-    } catch (e) {
-      throw new InvalidAttributeTypeException(createAttributeDto.relationType);
     }
 
     attribute.isForeign = createAttributeDto.isForeign;

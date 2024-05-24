@@ -12,8 +12,11 @@ import { notifications } from '@mantine/notifications';
 import { Schema } from '@/lib/model/schema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { cacheKeys, createGenerateCodeTask } from '@/api';
+import { useParams } from 'next/navigation';
 
 export function GeneratorStepper() {
+  const params = useParams();
+
   const [active, setActive] = useState(0);
   const nextStep = () =>
     setActive((current) => (current < 2 ? current + 1 : current));
@@ -38,6 +41,7 @@ export function GeneratorStepper() {
         title: 'Success',
         message: 'Code generation task added successfully',
       });
+      nextStep();
     },
   });
 
@@ -73,8 +77,6 @@ export function GeneratorStepper() {
       pathMaps: pathMap,
       paths,
     });
-
-    console.log(schemaIds);
   };
 
   return (
@@ -95,7 +97,10 @@ export function GeneratorStepper() {
 
       {active === 0 && (
         <div className="w-full flex justify-center my-10">
-          <GeneratorForm onSubmit={handleSchemaSelect} />
+          <GeneratorForm
+            projectStub={params['project-stub'] as string}
+            onSubmit={handleSchemaSelect}
+          />
         </div>
       )}
       {active === 1 && (

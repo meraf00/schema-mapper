@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { SchemaModule } from 'src/schema/schema.module';
+import { ProjectModule } from 'src/project/project.module';
 import { GeneratorController } from './controllers/generator.controller';
 import { BullModule } from '@nestjs/bull';
 import { CODE_GENERATION } from './injectionKeys';
@@ -16,7 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Template]),
-    SchemaModule,
+    ProjectModule,
     BullModule.registerQueue({
       name: CODE_GENERATION,
     }),

@@ -1,4 +1,4 @@
-import { Table } from 'src/schema/entities';
+import { Table } from 'src/project/entities';
 import { Importable } from '../dependency';
 import { Case } from 'change-case-all';
 import { DtoAttribute } from './dto-attribute';

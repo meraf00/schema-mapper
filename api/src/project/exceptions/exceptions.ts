@@ -1,3 +1,13 @@
+export const PostgresErrorCodes = {
+  unique_violation: '23505',
+};
+
+export class ProjectNotFoundException extends Error {
+  constructor(id: string) {
+    super(`Schema with id ${id} not found`);
+  }
+}
+
 export class SchemaNotFoundException extends Error {
   constructor(id: string) {
     super(`Schema with id ${id} not found`);

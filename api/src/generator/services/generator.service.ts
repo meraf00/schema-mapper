@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { SchemaService } from 'src/schema/services';
-import { Schema } from 'src/schema/entities';
+import { SchemaService } from 'src/project/services';
+import { Schema } from 'src/project/entities';
 import { Importable, externalModules } from '../entities/dependency';
 import { Module } from '../entities/module/module';
 import { Case } from 'change-case-all';

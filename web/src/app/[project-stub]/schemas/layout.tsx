@@ -3,11 +3,14 @@
 import { cacheKeys, getSchemas } from '@/api';
 import { SchemaExplorer } from '@/features/schema-builder/components';
 import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import React from 'react';
 
 export default function SchemaLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const params = useParams();
+
   const {
     isPending,
     error,
@@ -15,7 +18,7 @@ export default function SchemaLayout({
     isFetching,
   } = useQuery({
     queryKey: [cacheKeys.schemas],
-    queryFn: getSchemas,
+    queryFn: () => getSchemas(params['project-stub']! as string),
   });
 
   return (

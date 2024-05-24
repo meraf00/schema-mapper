@@ -1,6 +1,6 @@
 import { Case } from 'change-case-all';
 import { Importable, TypeOrmRepository } from '../dependency';
-import { Table, mapAttributeType } from 'src/schema/entities';
+import { Table, mapAttributeType } from 'src/project/entities';
 import {
   repositoryNameTemplate,
   serviceNameTemplate,

@@ -32,10 +32,21 @@ export interface AttributeData {
 }
 
 export const cacheKeys = {
+  projects: 'projects',
   schemas: 'schemas',
   tables: 'tables',
   attributes: 'attributes',
   tasks: 'tasks',
+};
+
+export const getProject = async (stub: string) => {
+  const response = await instance.get('projects');
+  return response.data;
+};
+
+export const getProjects = async () => {
+  const response = await instance.get('projects');
+  return response.data;
 };
 
 export const getSchema = async (id: string) => {
@@ -103,6 +114,7 @@ export const updateAttribute = async (
   attribId: string,
   attribute: AttributeData
 ) => {
+  console.log('akjdhfjkadhf', attribute);
   try {
     const response = await instance.put(`attributes/${attribId}`, attribute);
     return response.data;
@@ -126,7 +138,6 @@ export const deleteSchema = async (id: string) => {
   return response.data;
 };
 
-
 export const createGenerateCodeTask = async (
   schemaIds: string[],
   pathMap: {
@@ -140,7 +151,7 @@ export const createGenerateCodeTask = async (
     pathMap,
     paths,
   });
-  
+
   return response.data;
 };
 

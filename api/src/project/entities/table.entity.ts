@@ -10,7 +10,7 @@ import {
 import { Schema } from './schema.entity';
 import { Attribute } from './attribute.entity';
 
-@Entity()
+@Entity({ name: 'tables' })
 @Unique(['name', 'schemaId'])
 export class Table {
   @PrimaryGeneratedColumn('uuid')
