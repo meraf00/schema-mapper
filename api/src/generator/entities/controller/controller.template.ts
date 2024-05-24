@@ -30,7 +30,7 @@ const controller = `@Controller('/{{route}}s')
   
       constructor(private readonly {{service}}: {{serviceClass}}) {}
   
-      @Post(':{{entity.primaryKey}}')
+      @Post()
       async create(@Body() dto: {{createDtoClass}}) {
           return await this.{{service}}.create(dto);
       }

@@ -10,6 +10,7 @@ import { NestInjectRepository, NestInjectable } from '../dependency/nestjs';
 import { Entity } from '../entity';
 import { CreateDto, UpdateDto } from '../dto/dto';
 import { entityNameTemplate } from '../entity/entity.template';
+import { createDtoTemplate, updateDtoTemplate } from '../dto/dto.template';
 
 export class Service implements Importable {
   name: string;
@@ -56,6 +57,8 @@ export class Service implements Importable {
         primaryKey: Case.camel(primaryAttribute.name),
         primaryKeyType: attribType,
       },
+      createDto: createDtoTemplate({ name: Case.pascal(this.table.name) }),
+      updateDto: updateDtoTemplate({ name: Case.pascal(this.table.name) }),
       repository: repoName,
     });
   }
