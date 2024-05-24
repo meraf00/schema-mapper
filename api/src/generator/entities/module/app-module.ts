@@ -4,7 +4,7 @@ import { moduleNameTemplate, moduleTemplate } from './module.template';
 import { NestModule, NestTypeOrmModule } from '../dependency/nestjs';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Module } from './module';
-import { Schema } from 'src/schema/entities';
+import { Schema } from 'src/project/entities';
 
 export class App extends Module {
   name: string;

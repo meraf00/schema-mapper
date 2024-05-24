@@ -38,7 +38,7 @@ export class FileService {
     relativeFilePath: string,
     content: string,
   ) {
-    const filePath = path.join(workingDir, relativeFilePath + '.ts');
+    const filePath = path.join(workingDir, relativeFilePath);
     await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
 
     try {

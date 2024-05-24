@@ -6,24 +6,36 @@ import { cacheKeys, getSchemas } from '@/api';
 import { Schema } from '@/lib/model/schema';
 
 export interface GeneratorFormProps {
-  onSubmit: (data: GenerateCodeFormData) => void;
+  projectStub: string;
+  onSubmit: (schemas: Schema[]) => void;
 }
 
 export interface GenerateCodeFormData {
   schemas: string[];
 }
-export default function GeneratorForm({ onSubmit }: GeneratorFormProps) {
+
+export default function GeneratorForm({
+  projectStub,
+  onSubmit,
+}: GeneratorFormProps) {
   const { data: schemas, isLoading } = useQuery({
     queryKey: [cacheKeys.schemas],
-    queryFn: getSchemas,
+    queryFn: () => getSchemas(projectStub),
   });
 
   const { control, handleSubmit } = useForm<GenerateCodeFormData>();
 
+  const handleOnSubmit = (data: GenerateCodeFormData) => {
+    const selected = schemas.filter((schema: Schema) =>
+      data.schemas.includes(schema.id)
+    );
+    onSubmit(selected);
+  };
+
   return (
     <form
       className="flex flex-col gap-4 w-1/3"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(handleOnSubmit)}
     >
       <Controller
         name="schemas"
@@ -44,8 +56,9 @@ export default function GeneratorForm({ onSubmit }: GeneratorFormProps) {
           />
         )}
       />
+
       <Button type="submit" mt="sm">
-        Generate
+        Continue
       </Button>
     </form>
   );

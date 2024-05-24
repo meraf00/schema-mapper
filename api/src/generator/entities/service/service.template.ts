@@ -16,6 +16,9 @@ interface ServiceContext {
     primaryKeyType: string;
   };
 
+  createDto: string;
+  updateDto: string;
+
   repository: string;
 }
 
@@ -31,12 +34,12 @@ export class {{name}} {
         return await this.{{repository}}.findOne({where: { {{entity.primaryKey}} }});
     }
 
-    async create(data: Create{{entity.name}}Dto): Promise<{{entity.name}}> {
+    async create(data: {{createDto}}): Promise<{{entity.name}}> {
         const entity = this.{{repository}}.create(data);
         return await this.{{repository}}.save(entity);
     }
 
-    async update({{entity.primaryKey}}: {{entity.primaryKeyType}}, data: Update{{entity.name}}Dto): Promise<{{entity.name}}> {
+    async update({{entity.primaryKey}}: {{entity.primaryKeyType}}, data: {{updateDto}}): Promise<{{entity.name}}> {
         await this.{{repository}}.update({{entity.primaryKey}}, data);
         return await this.findOne({{entity.primaryKey}});
     }

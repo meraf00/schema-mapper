@@ -25,12 +25,12 @@ interface ControllerContext {
   updateDtoClass: string;
 }
 
-const controller = `@Controller(':{{route}}')
+const controller = `@Controller('/{{route}}s')
   export class {{name}} {
   
       constructor(private readonly {{service}}: {{serviceClass}}) {}
   
-      @Post(':{{entity.primaryKey}}')
+      @Post()
       async create(@Body() dto: {{createDtoClass}}) {
           return await this.{{service}}.create(dto);
       }

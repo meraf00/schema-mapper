@@ -2,7 +2,7 @@
 
 import { Schema } from '@/lib/model/schema';
 import React from 'react';
-import { Node } from './Node';
+import { Node } from '@/components/Node';
 import { useParams, useRouter } from 'next/navigation';
 
 export interface Active {
@@ -17,9 +17,9 @@ export interface HierarchyProps {
 }
 
 export const Hierarchy = ({ schemas }: HierarchyProps) => {
-  const path = '/project/schemas';
   const router = useRouter();
   const params = useParams();
+  const path = `/${params['project-stub']}/schemas`;
 
   let active = null;
 

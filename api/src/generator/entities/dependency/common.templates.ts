@@ -12,7 +12,7 @@ interface ImportContext {
   path: string;
 }
 
-const importStmt = `import { {{name}} } from '{{path}}';`;
+const importStmt = `import { {{name}} } from '{{stripImport path}}';`;
 
 interface FileContext {
   imports: string[];
@@ -31,3 +31,9 @@ export const decoratorTemplate =
 export const importTemplate = Handlebars.compile<ImportContext>(importStmt);
 
 export const fileTemplate = Handlebars.compile<FileContext>(file);
+
+Handlebars.registerHelper('stripImport', (path: string) => {
+  if (path.endsWith('.ts')) path = path.slice(0, -3);
+  if (path.startsWith('/')) path = path.slice(1);
+  return path;
+});

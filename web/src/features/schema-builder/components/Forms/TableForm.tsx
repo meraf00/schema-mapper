@@ -41,7 +41,7 @@ export default function TableForm({ table, onSubmit }: TableFormProps) {
 
   useEffect(() => {
     reset(tableToForm(table));
-  }, [table]);
+  }, [table, reset]);
 
   return (
     <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>

@@ -1,12 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { SchemaService } from 'src/schema/services';
-import { Schema } from 'src/schema/entities';
-import {
-  FolderStructure,
-  Importable,
-  ImportableTypes,
-  externalModules,
-} from '../entities/dependency';
+import { SchemaService } from 'src/project/services';
+import { Schema } from 'src/project/entities';
+import { Importable, externalModules } from '../entities/dependency';
 import { Module } from '../entities/module/module';
 import { Case } from 'change-case-all';
 import { FileService } from './file.service';
@@ -18,6 +13,7 @@ import { App } from '../entities/module/app-module';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { CODE_GENERATION } from '../injectionKeys';
+import { GenerateCodeDto } from '../dto/request.dto';
 
 @Injectable()
 export class CodeGeneratorService {
@@ -27,7 +23,10 @@ export class CodeGeneratorService {
     @InjectQueue(CODE_GENERATION) private queue: Queue,
   ) {}
 
-  async generate(schemas: Schema[]): Promise<string> {
+  async generate(
+    schemas: Schema[],
+    pathMap: { [key: string]: { type: string; path: string } },
+  ): Promise<string> {
     const modules = this.createModules(schemas);
 
     const importables = [
@@ -45,16 +44,25 @@ export class CodeGeneratorService {
 
     const workingDir = await this.fileService.createScaffoldDir();
 
-    const folderStructrue = this.template(modules.map((m) => m.module));
+    const files: { [key: string]: Importable[] } = {};
 
     for (const importable of importables) {
-      const path = this.resolvePath(importable, folderStructrue);
+      const path = this.resolvePath(importable, pathMap);
+      files[path] = files[path] ? [...files[path], importable] : [importable];
+    }
 
+    for (const [path, importables] of Object.entries(files)) {
       const importStmts = new Set(
-        importable.dependency.map((dependency) =>
-          importTemplate({
-            name: dependency.name,
-            path: this.resolvePath(dependency, folderStructrue),
+        importables.flatMap((importable) =>
+          importable.dependency.map((dependency) => {
+            const depPath = this.resolvePath(dependency, pathMap);
+
+            if (depPath !== path)
+              return importTemplate({
+                name: dependency.name,
+                path: depPath,
+              });
+            else return '';
           }),
         ),
       );
@@ -64,12 +72,75 @@ export class CodeGeneratorService {
         path,
         fileTemplate({
           imports: Array.from(importStmts.values()),
-          content: importable.code(),
+          content: this.topologicalSort(importables, path, pathMap)
+            .map((importable) => importable.code())
+            .join('\n\n'),
         }),
       );
     }
 
     return await this.fileService.archive(workingDir);
+  }
+
+  private topologicalSort(
+    importables: Importable[],
+    filePath: string,
+    pathMap: { [key: string]: { type: string; path: string } },
+  ): Importable[] {
+    const graph: { [key: string]: Importable[] } = {};
+
+    for (const importable of importables) {
+      if (!graph[importable.name]) graph[importable.name] = [];
+
+      importable.dependency
+        .filter((dep) => this.resolvePath(dep, pathMap) == filePath)
+        .forEach((dep) => {
+          if (graph[dep.name]) {
+            graph[dep.name].push(importable);
+          } else {
+            graph[dep.name] = [importable];
+          }
+        });
+    }
+
+    const inDegree: { [key: string]: number } = {};
+
+    for (const importable of importables) {
+      inDegree[importable.name] = 0;
+    }
+
+    for (const importable of importables) {
+      for (const dep of importable.dependency) {
+        if (this.resolvePath(dep, pathMap) == filePath)
+          inDegree[importable.name] += 1;
+      }
+    }
+
+    const queue: Importable[] = [];
+
+    for (const importable of importables) {
+      if (inDegree[importable.name] == 0) {
+        queue.push(importable);
+      }
+    }
+
+    const sorted = [];
+
+    while (queue.length) {
+      const importable = queue.shift();
+      sorted.push(importable);
+
+      for (const node of graph[importable.name]) {
+        if (this.resolvePath(node, pathMap) == filePath) {
+          inDegree[node.name] -= 1;
+          if (inDegree[node.name] == 0) {
+            queue.push(node);
+          }
+        }
+      }
+    }
+
+    return sorted;
   }
 
   async getRedisStatus() {
@@ -90,58 +161,28 @@ export class CodeGeneratorService {
     return await this.queue.getJob(jobId);
   }
 
-  async enqueueJob(generateCodeDto: { schemas: string[] }) {
+  async enqueueJob(generateCodeDto: GenerateCodeDto) {
     const schemas = await Promise.all(
       generateCodeDto.schemas.map((schemaId) =>
         this.schemaService.findOne(schemaId),
       ),
     );
 
-    console.log(schemas);
-
-    const job = await this.queue.add(schemas);
+    const job = await this.queue.add({
+      pathMap: generateCodeDto.pathMap,
+      paths: generateCodeDto.paths,
+      schemas,
+    });
 
     return job;
   }
 
-  private template(modules: string[]): FolderStructure {
-    const structure: FolderStructure = {};
-
-    for (const module of modules) {
-      structure[Case.pascal(module)] = {
-        Controller: `/src/${Case.kebab(module)}/controllers`,
-        Service: `/src/${Case.kebab(module)}/services`,
-        Entity: `/src/entities/${Case.kebab(module)}`,
-        Dto: `/src/${Case.kebab(module)}/dto`,
-        Module: `/src/${Case.kebab(module)}`,
-      };
-    }
-
-    structure['App'] = {
-      Controller: `/src/controllers`,
-      Service: `/src/services`,
-      Entity: `/src/entities`,
-      Dto: `/src/dto`,
-      Module: '/src',
-    };
-
-    return structure;
-  }
-
   private resolvePath(
     importable: Importable,
-    template: FolderStructure,
-  ): string {
+    pathMap: { [key: string]: { type: string; path: string } },
+  ) {
     if (externalModules.has(importable.module)) return importable.module;
-
-    const module = template[importable.module];
-
-    let type = importable.constructor.name as ImportableTypes;
-
-    if (importable.constructor.name.endsWith('Dto')) type = 'Dto';
-    if (importable.constructor.name.endsWith('App')) type = 'Module';
-
-    return `${module[type]}/${Case.dot(importable.name)}`;
+    return pathMap[`${importable.module}.${importable.name}`].path;
   }
 
   private createModules(schemas: Schema[]): Module[] {

@@ -13,10 +13,13 @@ export class GeneratorWorker {
 
   @Process()
   async generateCode(job: Job) {
-    const schemas = job.data;
+    const { schemas, pathMap } = job.data;
 
     try {
-      const filepath = await this.codeGeneratorService.generate(schemas);
+      const filepath = await this.codeGeneratorService.generate(
+        schemas,
+        pathMap,
+      );
       return filepath;
     } catch (error) {
       console.error(error);
@@ -26,7 +29,7 @@ export class GeneratorWorker {
 
   @OnQueueCompleted()
   onCompleted(job: Job) {
-    console.log(`Job completed with result`);
+    console.log(`Job completed successfully!`);
     this.websocket.sendToAll(job);
   }
 }

@@ -1,6 +1,6 @@
 import { Case } from 'change-case-all';
 import { Importable, TypeOrmRepository } from '../dependency';
-import { Table, mapAttributeType } from 'src/schema/entities';
+import { Table, mapAttributeType } from 'src/project/entities';
 import {
   repositoryNameTemplate,
   serviceNameTemplate,
@@ -9,6 +9,8 @@ import {
 import { NestInjectRepository, NestInjectable } from '../dependency/nestjs';
 import { Entity } from '../entity';
 import { CreateDto, UpdateDto } from '../dto/dto';
+import { entityNameTemplate } from '../entity/entity.template';
+import { createDtoTemplate, updateDtoTemplate } from '../dto/dto.template';
 
 export class Service implements Importable {
   name: string;
@@ -51,10 +53,12 @@ export class Service implements Importable {
     return serviceTemplate({
       name: this.name,
       entity: {
-        name: Case.pascal(this.table.name),
+        name: entityNameTemplate({ name: Case.pascal(this.table.name) }),
         primaryKey: Case.camel(primaryAttribute.name),
         primaryKeyType: attribType,
       },
+      createDto: createDtoTemplate({ name: Case.pascal(this.table.name) }),
+      updateDto: updateDtoTemplate({ name: Case.pascal(this.table.name) }),
       repository: repoName,
     });
   }

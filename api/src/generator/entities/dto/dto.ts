@@ -1,4 +1,4 @@
-import { Table } from 'src/schema/entities';
+import { Table } from 'src/project/entities';
 import { Importable } from '../dependency';
 import { Case } from 'change-case-all';
 import { DtoAttribute } from './dto-attribute';
@@ -19,9 +19,9 @@ export class CreateDto implements Importable {
   ) {
     this.name = createDtoTemplate({ name: Case.pascal(table.name) });
 
-    this.attributes = this.table.attributes.map(
-      (attribute) => new DtoAttribute(attribute),
-    );
+    this.attributes = this.table.attributes
+      .filter((attr) => !attr.isPrimary)
+      .map((attribute) => new DtoAttribute(attribute));
 
     this.dependency.push(
       ...this.attributes.flatMap((attribute) =>

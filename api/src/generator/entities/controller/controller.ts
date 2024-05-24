@@ -1,6 +1,6 @@
 import { Case } from 'change-case-all';
 import { Importable } from '../dependency';
-import { Table, mapAttributeType } from 'src/schema/entities';
+import { Table, mapAttributeType } from 'src/project/entities';
 import { createDtoTemplate, updateDtoTemplate } from '../dto/dto.template';
 import {
   controllerNameTemplate,

@@ -1,4 +1,8 @@
-import { Attribute, RelationType, mapAttributeType } from 'src/schema/entities';
+import {
+  Attribute,
+  RelationType,
+  mapAttributeType,
+} from 'src/project/entities';
 import {
   TypeOrmColumn,
   TypeOrmGeneratedColumn,
@@ -11,6 +15,7 @@ import { Importable } from '../dependency';
 import { attributeTemplate } from './attribute.template';
 import { Case } from 'change-case-all';
 import { Entity } from './entity';
+import { entityNameTemplate } from './entity.template';
 
 export class AttributeCode {
   dependency: Importable[] = [];
@@ -32,7 +37,7 @@ export class AttributeCode {
     if (this.attribute.relationType === RelationType.ONE_TO_ONE) {
       return [
         new TypeOrmOneToOne(
-          this.attribute.references.table.name,
+          entityNameTemplate({ name: this.attribute.references.table.name }),
           this.attribute.backref,
           { nullable: this.attribute.isNullable },
         ),
@@ -40,7 +45,7 @@ export class AttributeCode {
     } else if (this.attribute.relationType === RelationType.MANY_TO_ONE) {
       return [
         new TypeOrmManyToOne(
-          this.attribute.references.table.name,
+          entityNameTemplate({ name: this.attribute.references.table.name }),
           this.attribute.backref,
           { nullable: this.attribute.isNullable },
         ),
@@ -82,7 +87,7 @@ export class AttributeCode {
     let type: string;
 
     if (this.attribute.isForeign) {
-      type = Case.pascal(this.attribute.references.table.name);
+      type = entityNameTemplate({ name: this.attribute.references.table.name });
     } else {
       type = mapAttributeType(this.attribute.type);
     }
